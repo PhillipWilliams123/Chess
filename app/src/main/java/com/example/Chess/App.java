@@ -6,29 +6,25 @@ public class App
 {
     public static void main(String[] args)
     {
-        InitWindow(800, 450, "Demo");
+        //starts our window (should move to its own file for the setup)
+        InitWindow(800, 450, "Chess");
         SetTargetFPS(60);
-        Camera3D camera = new Camera3D()
-                ._position(new Vector3().x(18).y(16).z(18))
-                .target(new Vector3())
-                .up(new Vector3().x(0).y(1).z(0))
-                .fovy(45).projection(CAMERA_PERSPECTIVE);
-        // Add this line only if Raylib version < 4.5:
-        // SetCameraMode(camera, CAMERA_ORBITAL);
 
-        while (!WindowShouldClose()) {
-            UpdateCamera(camera, CAMERA_ORBITAL);
+        while (!WindowShouldClose())
+        {
+            //This tells Raylib that we want to start drawing something to the screen
             BeginDrawing();
+            //sets the background to a color which are constants starting with RAY"color"
             ClearBackground(RAYWHITE);
-            BeginMode3D(camera);
-            DrawGrid(20, 1.0f);
-            DrawCube(new Vector3().x(0).y(0).z(0), 1, 1, 1, BLACK);
-            DrawSphere(new Vector3().x(0).y(3).z(0), 1, BLUE);
-            EndMode3D();
-            DrawText("Hello world", 190, 200, 20, VIOLET);
+            
+            DrawText("Chess idk", 190, 200, 20, VIOLET);
             DrawFPS(20, 20);
+            
+            //Tells raylib that we have stopped drawing stuff
             EndDrawing();
         }
+        
+        //does some cleanup
         CloseWindow();
     }
 }
