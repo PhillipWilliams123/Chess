@@ -17,7 +17,7 @@ public class App
             //sets the background to a color which are constants starting with RAY"color"
             ClearBackground(RAYWHITE);
             
-            DrawText("Chess idk", 190, 200, 20, VIOLET);
+            DrawText("Quantum Chess", 0, 0, 1, VIOLET);
             DrawFPS(20, 20);
             
             //Tells raylib that we have stopped drawing stuff
