@@ -5,9 +5,9 @@
 package com.example.Chess.Chess;
 
 /**
- *
- * @author ericl
+ * @author ericl, phillip, daniel
  */
-public class Piece {
-    
+public abstract class Piece
+{
+        
 }
