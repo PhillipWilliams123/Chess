@@ -1,4 +1,6 @@
 package com.example.Chess;
+import com.example.Chess.Rendering.Renderer;
+
 import static com.raylib.Colors.*;
 import static com.raylib.Raylib.*;
 
@@ -6,8 +8,11 @@ public class App
 {
     public static void main(String[] args)
     {
+        //Important classes
+        Renderer mainRenderer = new Renderer();
+
         //starts our window (should move to its own file for the setup)
-        InitWindow(1280, 720, "Chess");
+        InitWindow(640, 480, "Chess");
         SetTargetFPS(60);
 
         while (!WindowShouldClose())
@@ -20,6 +25,8 @@ public class App
             DrawText("Quantum Chess", 0, 0, 1, VIOLET);
             DrawFPS(20, 20);
             
+            mainRenderer.DrawChessBoard();
+
             //Tells raylib that we have stopped drawing stuff
             EndDrawing();
         }
