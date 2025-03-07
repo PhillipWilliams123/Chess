@@ -1,4 +1,5 @@
 package com.example.Chess;
+import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Rendering.Renderer;
 import org.bytedeco.javacpp.BytePointer;
 
@@ -22,7 +23,13 @@ public class App
         Globals.RunDirectory = workingDirectory.getString();
         //clean up the memory (NEEDED)
         workingDirectory.close();
+        //set the resources directory (This might need to change if the game is run outside of this project)
         Globals.ResourceDirectory = Globals.RunDirectory + "/src/main/resources/";
+        //set the images directory
+        Globals.ImageDirectory = Globals.ResourceDirectory + "Images/";
+
+        //Initialize systems
+        ChessBoard.Init();
 
         while (!WindowShouldClose())
         {            
