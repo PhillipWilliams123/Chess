@@ -1,5 +1,6 @@
 package com.example.Chess;
 import com.example.Chess.Rendering.Renderer;
+import org.bytedeco.javacpp.BytePointer;
 
 import static com.raylib.Colors.*;
 import static com.raylib.Raylib.*;
@@ -12,8 +13,16 @@ public class App
         Renderer mainRenderer = new Renderer();
 
         //starts our window (should move to its own file for the setup)
-        InitWindow(640, 480, "Chess");
+        InitWindow(Globals.ScreenWidth, Globals.ScreenHeight, "Chess");
         SetTargetFPS(60);
+
+        //get where the game is running
+        BytePointer workingDirectory = GetWorkingDirectory();
+        //set it to our global variable
+        Globals.RunDirectory = workingDirectory.getString();
+        //clean up the memory (NEEDED)
+        workingDirectory.close();
+        Globals.ResourceDirectory = Globals.RunDirectory + "/src/main/resources/";
 
         while (!WindowShouldClose())
         {            
