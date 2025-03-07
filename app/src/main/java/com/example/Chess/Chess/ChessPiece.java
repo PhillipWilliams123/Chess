@@ -1,13 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.Chess.Chess;
+import static com.raylib.Raylib.*;
+import com.raylib.Raylib.Image;
 
 /**
  * @author ericl, phillip, daniel
  */
-public abstract class Piece
+public abstract class ChessPiece
 {
-        
+    private Image image;
+
+    public void DrawPiece()
+    {
+        image = LoadImage(GetImageLocation());
+
+    }
+
+    public abstract String GetImageLocation();
+    public abstract boolean ValidMove()
+
 }

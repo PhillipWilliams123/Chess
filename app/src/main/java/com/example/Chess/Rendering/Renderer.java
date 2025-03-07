@@ -1,5 +1,6 @@
 package com.example.Chess.Rendering;
 
+import com.example.Chess.Globals;
 import com.raylib.Raylib;
 
 import static com.raylib.Colors.*;
@@ -15,8 +16,8 @@ public class Renderer {
         //creating a checkerboard pattern
 
         //the scale for the screen
-        float xScale = 640.0f / 8.0f;
-        float yScale = 480.0f / 8.0f;
+        double xScale = Globals.ScreenWidth / 8.0;
+        double yScale = Globals.ScreenHeight / 8.0;
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 if ((x + y) % 2 != 0) {
