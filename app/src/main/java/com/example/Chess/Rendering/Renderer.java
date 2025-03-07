@@ -1,5 +1,6 @@
 package com.example.Chess.Rendering;
 
+import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Globals;
 import com.raylib.Raylib;
 
@@ -29,5 +30,7 @@ public class Renderer {
                 }
             }
         }
+
+        ChessBoard.TestDraw();
     }
 }

@@ -21,6 +21,11 @@ public class Vector2{
         return x * x + y * y;
     }
 
+    public boolean Equals(Vector2 a)
+    {
+        return x == a.x && y == a.y;
+    }
+
     public static Vector2 Normalize(Vector2 a)
     {
         return Vector2.Div(a, a.Length());

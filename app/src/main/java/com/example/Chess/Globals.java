@@ -6,5 +6,6 @@ public class Globals {
     //Where the games files should be located and stuff
     public static String RunDirectory;
     public static String ResourceDirectory;
+    public static String ImageDirectory;
 
 }
