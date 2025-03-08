@@ -5,69 +5,81 @@ import com.example.Chess.Vector2;
 
 public class Rook extends ChessPiece {
 
-    @Override
-    public String GetImageLocation()
+    public Rook(Vector2 position)
     {
-        return Globals.ImageDirectory + "King.png";
-        
+        this.position = position;
     }
 
     @Override
-    public boolean ValidMove(Vector2 pos)
+    public String GetImageLocation()
     {
+        //should be a rook
+        return Globals.ImageDirectory + "King.png";
+    }
+
+    @Override
+    public boolean TryMove(Vector2 pos)
+    {
+        //add our position to the pos
+        pos = Vector2.Add(position, pos);
+
         //Since rook can only move in straight lines we only need to check in the direction to the pos move
 
         //we just need to check 4 directions
+        Vector2 direction = new Vector2(0,0);
+        int moveAmount = 0;
         for (int i = 0; i < 4; i++)
         {
-            Vector2 direction;
             if(i == 0)
             {
                 //check to the left
-                direction = new Vector2(0, -1);
-
+                direction = new Vector2(-1, 0);
+                //get the amount we need to move by or if we can move
+                moveAmount = CheckInDirection(direction, position, pos);
+                if(moveAmount != 0)
+                    break;
             }
             else if (i == 1)
             {
-
+                //check to the top
+                direction = new Vector2(0, -1);
+                //get the amount we need to move by or if we can move
+                moveAmount = CheckInDirection(direction, position, pos);
+                if(moveAmount != 0)
+                    break;
             }
             else if (i == 2)
             {
-
+                //check to the right
+                direction = new Vector2(1, 0);
+                //get the amount we need to move by or if we can move
+                moveAmount = CheckInDirection(direction, position, pos);
+                if(moveAmount != 0)
+                    break;
             }
-            else if (i == 3)
-            {
-
+            else {
+                //check to the bottom
+                direction = new Vector2(0, 1);
+                //get the amount we need to move by or if we can move
+                moveAmount = CheckInDirection(direction, position, pos);
+                if(moveAmount != 0)
+                    break;
             }
+        }
+
+        //if we can move to our selected position then we move and return true
+        if(moveAmount != 0)
+        {
+            position = Vector2.Add(position, Vector2.Mul(direction, moveAmount));
+            return true;
         }
 
         return false;
     }
 
-    int CheckInDirection(Vector2 dir, Vector2 pos, Vector2 wantedPos)
+    @Override
+    public ChessPiece Copy()
     {
-        boolean check = false;
-        int moveCount = 0;
-        Vector2 posMove = Vector2.Add(pos, dir);
-        while (check == false)
-        {
-            //if we reach the end of the boards bounds we have finished and can return true
-            //or if we have reached our decided position we wanted to move to
-            if(ChessBoard.PosInBounds(posMove) == false || posMove.Equals(wantedPos))
-            {
-                check = true;
-            }
-
-            ChessPiece piece = ChessBoard.GetChessPieceAtPos(posMove);
-            //we have a piece in our moved position so this is the farthest we can go
-            if(piece.id != -1)
-            {
-                check = true;
-            }
-
-            moveCount++;
-        }
-
-        return moveCount;
+        return new Rook(this.position);
     }
 }

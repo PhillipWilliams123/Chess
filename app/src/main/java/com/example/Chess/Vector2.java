@@ -1,5 +1,8 @@
 package com.example.Chess;
 
+/**
+ * Acts as a direction, position, set of two numbers, basically anything
+ */
 public class Vector2{
 
     public double x;
@@ -9,6 +12,12 @@ public class Vector2{
     {
         this.x = x;
         this.y = y;
+    }
+
+    public Vector2(Vector2 a)
+    {
+        this.x = a.x;
+        this.y = a.y;
     }
 
     public double Length()
@@ -33,12 +42,12 @@ public class Vector2{
 
     public static double Dot(Vector2 a, Vector2 b)
     {
-        return (a.x * a.y) + (a.y * b.y);
+        return (a.x * b.x) + (a.y * b.y);
     }
 
     public static Vector2 Add(Vector2 a, Vector2 b)
     {
-        return new Vector2(a.x + b.y, a.y + b.y);
+        return new Vector2(a.x + b.x, a.y + b.y);
     }
 
     public static Vector2 Add(Vector2 a, double b)
@@ -48,7 +57,7 @@ public class Vector2{
 
     public static Vector2 Sub(Vector2 a, Vector2 b)
     {
-        return new Vector2(a.x - b.y, a.y - b.y);
+        return new Vector2(a.x - b.x, a.y - b.y);
     }
 
     public static Vector2 Sub(Vector2 a, double b)
@@ -58,7 +67,7 @@ public class Vector2{
 
     public static Vector2 Mul(Vector2 a, Vector2 b)
     {
-        return new Vector2(a.x * b.y, a.y * b.y);
+        return new Vector2(a.x * b.x, a.y * b.y);
     }
 
     public static Vector2 Mul(Vector2 a, double b)
@@ -68,11 +77,17 @@ public class Vector2{
 
     public static Vector2 Div(Vector2 a, Vector2 b)
     {
-        return new Vector2(a.x / b.y, a.y / b.y);
+        return new Vector2(a.x / b.x, a.y / b.y);
     }
 
     public static Vector2 Div(Vector2 a, double b)
     {
         return new Vector2(a.x / b, a.y / b);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "<" + x + "," + y + ">";
     }
 }

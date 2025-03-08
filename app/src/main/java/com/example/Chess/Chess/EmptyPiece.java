@@ -18,7 +18,13 @@ public class EmptyPiece extends ChessPiece
     }
 
     @Override
-    public boolean ValidMove(Vector2 pos) {
+    public boolean TryMove(Vector2 pos) {
         return false;
+    }
+
+    @Override
+    public ChessPiece Copy()
+    {
+        return new EmptyPiece();
     }
 }

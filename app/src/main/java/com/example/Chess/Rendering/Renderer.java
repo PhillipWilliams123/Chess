@@ -30,7 +30,16 @@ public class Renderer {
                 }
             }
         }
+    }
 
-        ChessBoard.TestDraw();
+    public void DrawPieces()
+    {
+        for (int i = 0; i < ChessBoard.chessPieces.length; i++)
+        {
+            if(ChessBoard.chessPieces[i].id == -1)
+                continue;
+
+            ChessBoard.chessPieces[i].DrawPiece();
+        }
     }
 }
