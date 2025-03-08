@@ -3,7 +3,8 @@ package com.example.Chess;
 /**
  * Acts as a direction, position, set of two numbers, basically anything
  */
-public class Vector2{
+public class Vector2
+{
 
     public double x;
     public double y;

@@ -126,7 +126,6 @@ public class ChessBoard
 
         //we are good to add a piece
         int index = freeChessPieceIds.poll();
-        System.out.println(index);
         chessPieces[index] = piece.Copy();
         chessPieces[index].id = index;
         chessPieces[index].Init();
@@ -135,7 +134,7 @@ public class ChessBoard
 
     /**
      * Will set a piece on the position to empty effectively "deleting it"
-     * @param position
+     * @param position the position of the piece to be "deleted"
      */
     public static void DeletePiece(Vector2 position)
     {
