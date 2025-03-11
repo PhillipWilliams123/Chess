@@ -70,7 +70,10 @@ public class App
         {
             for (int j = 0; j < 8; j++)
             {
-                ChessBoard.AddPiece(new Rook(new Vector2(i,j)));
+                if((i + j) % 2 == 0)
+                    ChessBoard.AddPiece(new Rook(new Vector2(i,j), false));
+                else
+                    ChessBoard.AddPiece(new Rook(new Vector2(i,j), true));
             }
         }
 
@@ -86,7 +89,10 @@ public class App
         {
             for (int j = 0; j < 8; j++)
             {
-                ChessBoard.AddPiece(new Rook(new Vector2(i,j)));
+                if((i + j) % 2 == 0)
+                    ChessBoard.AddPiece(new Rook(new Vector2(i,j), false));
+                else
+                    ChessBoard.AddPiece(new Rook(new Vector2(i,j), true));
             }
         }
     }
