@@ -23,10 +23,10 @@ public class Renderer {
             for (int y = 0; y < 8; y++) {
                 if ((x + y) % 2 != 0) {
                     //some other color
-                    Raylib.DrawRectangle((int) (x * xScale), (int) (y * yScale), (int) xScale, (int) yScale, BLACK);
+                    Raylib.DrawRectangle((int) (x * xScale), (int) (y * yScale), (int) xScale, (int) yScale, Globals.BoardColors[0]);
                 } else {
                     //some color
-                    Raylib.DrawRectangle((int) (x * xScale), (int) (y * yScale), (int) xScale, (int) yScale, GRAY);
+                    Raylib.DrawRectangle((int) (x * xScale), (int) (y * yScale), (int) xScale, (int) yScale, Globals.BoardColors[1]);
                 }
             }
         }

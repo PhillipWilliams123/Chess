@@ -5,8 +5,9 @@ import com.example.Chess.Vector2;
 
 public class Rook extends ChessPiece {
 
-    public Rook(Vector2 position)
+    public Rook(Vector2 position, boolean side)
     {
+        this.side = side;
         this.position = position;
     }
 
@@ -14,7 +15,7 @@ public class Rook extends ChessPiece {
     public String GetImageLocation()
     {
         //should be a rook
-        return Globals.ImageDirectory + "King.png";
+        return Globals.ImageDirectory + Globals.PieceImages[3 + (6 * (side ? 1 : 0))];
     }
 
     @Override
@@ -80,6 +81,6 @@ public class Rook extends ChessPiece {
     @Override
     public ChessPiece Copy()
     {
-        return new Rook(this.position);
+        return new Rook(this.position, this.side);
     }
 }
