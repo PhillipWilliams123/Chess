@@ -32,7 +32,8 @@ public abstract class ChessPiece
     {
         //resize the images to the correct size
         Image tempImage = LoadImage(GetImageLocation());
-        ImageResize(tempImage, 70, 70);
+        int size = Globals.ScreenWidth / ChessBoard.boardSize;
+        ImageResize(tempImage, size, size);
         image = LoadTextureFromImage(tempImage);
     }
 
@@ -41,9 +42,8 @@ public abstract class ChessPiece
      */
     public void DrawPiece()
     {
-        int padding = 5;
         Vector2 scaledPos = ChessBoard.ScalePosToBoardSpace(position);
-        DrawTexture(image, (int)scaledPos.x + padding, (int)scaledPos.y + padding, Globals.ChessPieceHue);
+        DrawTexture(image, (int)scaledPos.x, (int)scaledPos.y, Globals.ChessPieceHue);
     }
 
     /**

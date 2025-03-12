@@ -8,6 +8,9 @@ import java.util.Queue;
 
 public class ChessBoard
 {
+    /**
+     * The size of the chessBoard
+     */
     public static final int boardSize = 8;
     public static ChessPiece[] chessPieces;
     /**
@@ -43,7 +46,7 @@ public class ChessBoard
      */
     public static int PosToIndex(Vector2 pos)
     {
-        if(pos.x < 0 || pos.x >= 8 || pos.y < 0 || pos.y >= 8)
+        if(pos.x < 0 || pos.x >= boardSize || pos.y < 0 || pos.y >= boardSize)
             return -1;
         return (boardSize * (int)Math.floor(pos.x)) + (int)Math.floor(pos.y);
     }
@@ -55,7 +58,7 @@ public class ChessBoard
      */
     public static boolean PosInBounds(Vector2 pos)
     {
-        if(pos.x < 0 || pos.x >= 8 || pos.y < 0 || pos.y >= 8)
+        if(pos.x < 0 || pos.x >= boardSize || pos.y < 0 || pos.y >= boardSize)
             return false;
         return true;
     }
@@ -134,6 +137,7 @@ public class ChessBoard
 
     /**
      * Will set a piece on the position to empty effectively "deleting it"
+     * This should not be run while a piece is being updated
      * @param position the position of the piece to be "deleted"
      */
     public static void DeletePiece(Vector2 position)
