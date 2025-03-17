@@ -40,6 +40,39 @@ public class ChessBoard
         }
     }
 
+    public static void InitStandardGame()
+    {
+        //top row
+        AddPiece(new Rook(new Vector2(0,0), false));
+        //AddPiece(new Knight(new Vector2(1,0), false));
+        //AddPiece(new Bishop(new Vector2(2,0), false));
+        //AddPiece(new King(new Vector2(3,0), false));
+        AddPiece(new Queen(new Vector2(4,0), false));
+        //AddPiece(new Bishop(new Vector2(5,0), false));
+        //AddPiece(new Knight(new Vector2(6,0), false));
+        AddPiece(new Rook(new Vector2(7,0), false));
+
+        for (int i = 0; i < 8; i++)
+        {
+            AddPiece(new Pawn(new Vector2(i,1), false));
+        }
+
+        //Bottom row
+        AddPiece(new Rook(new Vector2(0,7), true));
+        //AddPiece(new Knight(new Vector2(1,7), true));
+        //AddPiece(new Bishop(new Vector2(2,7), true));
+        AddPiece(new Queen(new Vector2(3,7), true));
+        //AddPiece(new King(new Vector2(4,7), true));
+        //AddPiece(new Bishop(new Vector2(5,7), true));
+        //AddPiece(new Knight(new Vector2(6,7), true));
+        AddPiece(new Rook(new Vector2(7,7), true));
+
+        for (int i = 0; i < 8; i++)
+        {
+            AddPiece(new Pawn(new Vector2(i,6), true));
+        }
+    }
+
     /**
      * Will take in a position and return an index into a array based on positions (chessPieceIds)
      * @param pos the position from 0-8 and 0-8 on x and y
@@ -124,8 +157,7 @@ public class ChessBoard
             return;
 
         //check if there's already a piece there
-        ChessPiece checkPiece = GetChessPieceAtPos(piece.position);
-        if(checkPiece.id != -1)
+        if(GetPieceIdAtPos(piece.position) != -1)
             return;
 
         //we are good to add a piece
