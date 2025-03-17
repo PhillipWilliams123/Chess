@@ -3,6 +3,7 @@ import static com.raylib.Raylib.*;
 
 import com.example.Chess.Globals;
 import com.example.Chess.Vector2;
+import com.raylib.Raylib;
 import com.raylib.Raylib.Texture;
 import static com.raylib.Colors.*;
 
@@ -46,6 +47,21 @@ public abstract class ChessPiece
         DrawTexture(image, (int)scaledPos.x, (int)scaledPos.y, Globals.ChessPieceHue);
     }
 
+    public void DrawPossibleMoves()
+    {
+        double xScale = Globals.ScreenWidth / (double)ChessBoard.boardSize;
+        double yScale = Globals.ScreenHeight / (double)ChessBoard.boardSize;
+
+        for (int i = 0; i < ChessBoard.boardSize; i++)
+        {
+            for (int j = 0; j < ChessBoard.boardSize; j++)
+            {
+                if(CheckMove(new Vector2(i,j)))
+                    Raylib.DrawRectangle((int) ((position.x + i) * xScale), (int) ((position.y + j) * yScale), (int) xScale, (int) yScale, RED);
+            }
+        }
+    }
+
     /**
      * Will get the image location for the piece. Is abstract so each specific piece has its own implementation and can be used here
      * @return the image location
@@ -58,6 +74,13 @@ public abstract class ChessPiece
      * @return true if it can make the move, false if it cannot make the move
      */
     public abstract boolean TryMove(Vector2 pos);
+
+    /**
+     * Checks if a piece can move to the position
+     * @param pos the position to check if we can move
+     * @return true if we can make the move, false if we cannot
+     */
+    public abstract boolean CheckMove(Vector2 pos);
 
     /**
      * Checks in a direction from a position to a wanted position, if there is a piece of a border of the chess board

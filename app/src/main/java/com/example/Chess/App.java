@@ -1,5 +1,7 @@
 package com.example.Chess;
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.Pawn;
+import com.example.Chess.Chess.Queen;
 import com.example.Chess.Chess.Rook;
 import com.example.Chess.Rendering.Renderer;
 import org.bytedeco.javacpp.BytePointer;
@@ -63,6 +65,9 @@ public class App
     {
         //initialize any systems
         ChessBoard.Init();
+
+        //ChessBoard.AddPiece(new Rook(new Vector2(2,0), true));
+        //ChessBoard.chessPieces[0].TryMove(new Vector2(0,-2));
     }
 
     public static void Update()
@@ -76,5 +81,7 @@ public class App
 
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
+
+        //ChessBoard.chessPieces[0].DrawPossibleMoves();
     }
 }

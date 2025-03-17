@@ -18,6 +18,11 @@ public class Knight extends ChessPiece
     }
 
     @Override
+    public boolean CheckMove(Vector2 pos) {
+        return false;
+    }
+
+    @Override
     public ChessPiece Copy() {
         return null;
     }
