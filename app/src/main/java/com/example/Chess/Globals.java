@@ -32,7 +32,7 @@ public class Globals
                     "Black_King.png",
             };
 
-    public static Raylib.Color[] BoardColors = {SKYBLUE, RAYWHITE};
+    public static Raylib.Color[] BoardColors = {BROWN, BEIGE};
     public static Raylib.Color ChessPieceHue = WHITE;
 
 }
