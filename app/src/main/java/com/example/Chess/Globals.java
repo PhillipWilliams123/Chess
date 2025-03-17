@@ -9,4 +9,30 @@ public class Globals
     public static String ResourceDirectory;
     public static String ImageDirectory;
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * List of the piece file names
+     * starting with white, and black can be got by adding 6 to the index
+     */
+    public static String[] PieceImages =
+            {
+                    "White_Pawn.png",
+                    "White_Knight.png",
+                    "White_Bishop.png",
+                    "White_Rook.png",
+                    "White_Queen.png",
+                    "White_King.png",
+                    "Black_Pawn.png",
+                    "Black_Knight.png",
+                    "Black_Bishop.png",
+                    "Black_Rook.png",
+                    "Black_Queen.png",
+                    "Black_King.png",
+            };
+
+    public static Raylib.Color[] BoardColors = {BROWN, BEIGE};
+    public static Raylib.Color ChessPieceHue = WHITE;
+
+>>>>>>> Stashed changes
 }
