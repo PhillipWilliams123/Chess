@@ -21,9 +21,6 @@ public class Rook extends ChessPiece {
     @Override
     public boolean TryMove(Vector2 pos)
     {
-        //add our position to the pos
-        pos = Vector2.Add(position, pos);
-
         //Since rook can only move in straight lines we only need to check in the direction to the pos move
 
         //we just need to check 4 directions
@@ -71,7 +68,11 @@ public class Rook extends ChessPiece {
         //if we can move to our selected position then we move and return true
         if(moveAmount != 0)
         {
+            //set our old position id to -1 as there is nothing there now
+            ChessBoard.SetPieceIdAtPos(position, -1);
             position = Vector2.Add(position, Vector2.Mul(direction, moveAmount));
+            //set our new position id to be the id of this chess piece
+            ChessBoard.SetPieceIdAtPos(position, id);
             return true;
         }
 
@@ -79,10 +80,8 @@ public class Rook extends ChessPiece {
     }
 
     @Override
-    public boolean CheckMove(Vector2 pos) {
-        //add our position to the pos
-        pos = Vector2.Add(position, pos);
-
+    public boolean CheckMove(Vector2 pos)
+    {
         //Since rook can only move in straight lines we only need to check in the direction to the pos move
 
         //we just need to check 4 directions
@@ -128,12 +127,7 @@ public class Rook extends ChessPiece {
         }
 
         //if we can move to our selected position then we move and return true
-        if(moveAmount != 0)
-        {
-            return true;
-        }
-
-        return false;
+        return moveAmount != 0;
     }
 
     @Override

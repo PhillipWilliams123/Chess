@@ -56,8 +56,9 @@ public abstract class ChessPiece
         {
             for (int j = 0; j < ChessBoard.boardSize; j++)
             {
+                //System.out.println(CheckMove(new Vector2(i,j)) + " " + i + " " + j);
                 if(CheckMove(new Vector2(i,j)))
-                    Raylib.DrawRectangle((int) ((position.x + i) * xScale), (int) ((position.y + j) * yScale), (int) xScale, (int) yScale, RED);
+                    Raylib.DrawRectangle((int) (i * xScale), (int) (j * yScale), (int) xScale, (int) yScale, RED);
             }
         }
     }
@@ -101,14 +102,13 @@ public abstract class ChessPiece
             posMove = Vector2.Add(posMove, dir);
 
             //if we reach out of bounds we have either gone out of the board or never reached our wanted position
-            if(!ChessBoard.PosInBounds(posMove))
+            if(!ChessBoard.PosInBounds(posMove) || moveCount > 8)
             {
                 return 0;
             }
 
-            ChessPiece piece = ChessBoard.GetChessPieceAtPos(posMove);
             //we have a piece in our moved position so this is the farthest we can go
-            if(piece.id != -1)
+            if(ChessBoard.GetPieceIdAtPos(posMove) != -1)
             {
                 return moveCount;
             }

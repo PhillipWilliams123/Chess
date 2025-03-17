@@ -35,6 +35,7 @@ public class ChessBoard
         for (int i = 0; i < boardSize * boardSize; i++)
         {
            chessPieces[i] = new EmptyPiece();
+           chessPieceIds[i] = -1;
            freeChessPieceIds.add(i);
         }
     }

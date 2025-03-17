@@ -66,8 +66,7 @@ public class App
         //initialize any systems
         ChessBoard.Init();
 
-        //ChessBoard.AddPiece(new Rook(new Vector2(2,0), true));
-        //ChessBoard.chessPieces[0].TryMove(new Vector2(0,-2));
+        ChessBoard.AddPiece(new Queen(new Vector2(3,3), true));
     }
 
     public static void Update()
@@ -82,6 +81,6 @@ public class App
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
 
-        //ChessBoard.chessPieces[0].DrawPossibleMoves();
+        ChessBoard.chessPieces[0].DrawPossibleMoves();
     }
 }

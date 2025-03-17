@@ -16,8 +16,6 @@ public Queen(Vector2 position, boolean side) {
 
     @Override
     public boolean TryMove(Vector2 pos) {
-         // Add our position to the pos
-        pos = Vector2.Add(position, pos);
 
         // Queen can move like a rook or a bishop, so we check all 8 directions
         Vector2[] directions = {
@@ -34,7 +32,9 @@ public Queen(Vector2 position, boolean side) {
    for (Vector2 direction : directions) {
             int moveAmount = CheckInDirection(direction, position, pos);
             if (moveAmount != 0) {
+                ChessBoard.SetPieceIdAtPos(position, -1);
                 position = Vector2.Add(position, Vector2.Mul(direction, moveAmount));
+                ChessBoard.SetPieceIdAtPos(position, id);
                 return true;
             }
         }
@@ -45,9 +45,6 @@ public Queen(Vector2 position, boolean side) {
     @Override
     public boolean CheckMove(Vector2 pos)
     {
-        // Add our position to the pos
-        pos = Vector2.Add(position, pos);
-
         // Queen can move like a rook or a bishop, so we check all 8 directions
         Vector2[] directions = {
                 new Vector2(-1, 0), // Left
