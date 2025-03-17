@@ -1,5 +1,7 @@
 package com.example.Chess.Chess;
 import static com.raylib.Raylib.*;
+
+import com.example.Chess.Globals;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib.Texture;
 import static com.raylib.Colors.*;
@@ -12,6 +14,11 @@ public abstract class ChessPiece
     public int id;
     public Vector2 position;
     private Texture image;
+    /**
+     * False for white
+     * True for black
+     */
+    public boolean side;
 
     public void Init()
     {
@@ -23,7 +30,11 @@ public abstract class ChessPiece
      */
     public void LoadImageToPiece()
     {
-        image = LoadTexture(GetImageLocation());
+        //resize the images to the correct size
+        Image tempImage = LoadImage(GetImageLocation());
+        int size = Globals.ScreenWidth / ChessBoard.boardSize;
+        ImageResize(tempImage, size, size);
+        image = LoadTextureFromImage(tempImage);
     }
 
     /**
@@ -32,7 +43,7 @@ public abstract class ChessPiece
     public void DrawPiece()
     {
         Vector2 scaledPos = ChessBoard.ScalePosToBoardSpace(position);
-        DrawTexture(image, (int)scaledPos.x, (int)scaledPos.y, WHITE);
+        DrawTexture(image, (int)scaledPos.x, (int)scaledPos.y, Globals.ChessPieceHue);
     }
 
     /**

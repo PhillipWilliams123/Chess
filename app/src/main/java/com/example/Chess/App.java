@@ -63,32 +63,6 @@ public class App
     {
         //initialize any systems
         ChessBoard.Init();
-
-        //Testing code
-
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                ChessBoard.AddPiece(new Rook(new Vector2(i,j)));
-            }
-        }
-
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                ChessBoard.DeletePiece(new Vector2(i,j));
-            }
-        }
-
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                ChessBoard.AddPiece(new Rook(new Vector2(i,j)));
-            }
-        }
     }
 
     public static void Update()
