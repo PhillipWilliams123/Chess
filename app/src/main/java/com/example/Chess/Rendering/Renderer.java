@@ -46,6 +46,14 @@ public class Renderer {
             if(ChessBoard.chessPieces[i].id == -1)
                 continue;
 
+            ChessBoard.chessPieces[i].DrawPossibleMoves();
+        }
+
+        for (int i = 0; i < ChessBoard.chessPieces.length; i++)
+        {
+            if(ChessBoard.chessPieces[i].id == -1)
+                continue;
+
             ChessBoard.chessPieces[i].DrawPiece();
         }
     }

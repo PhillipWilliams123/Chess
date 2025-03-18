@@ -56,7 +56,6 @@ public abstract class ChessPiece
         {
             for (int j = 0; j < ChessBoard.boardSize; j++)
             {
-                //System.out.println(CheckMove(new Vector2(i,j)) + " " + i + " " + j);
                 if(CheckMove(new Vector2(i,j)))
                     Raylib.DrawRectangle((int) (i * xScale), (int) (j * yScale), (int) xScale, (int) yScale, RED);
             }
@@ -110,7 +109,7 @@ public abstract class ChessPiece
             //we have a piece in our moved position so this is the farthest we can go
             if(ChessBoard.GetPieceIdAtPos(posMove) != -1)
             {
-                return moveCount;
+                return 0;
             }
 
             //we have reached where we wanted to go with no issues

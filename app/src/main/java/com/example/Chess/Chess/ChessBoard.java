@@ -43,33 +43,33 @@ public class ChessBoard
     public static void InitStandardGame()
     {
         //top row
-        AddPiece(new Rook(new Vector2(0,0), false));
-        //AddPiece(new Knight(new Vector2(1,0), false));
-        //AddPiece(new Bishop(new Vector2(2,0), false));
-        //AddPiece(new King(new Vector2(3,0), false));
-        AddPiece(new Queen(new Vector2(4,0), false));
-        //AddPiece(new Bishop(new Vector2(5,0), false));
-        //AddPiece(new Knight(new Vector2(6,0), false));
-        AddPiece(new Rook(new Vector2(7,0), false));
+        AddPiece(new Rook(new Vector2(0,0), true));
+        //AddPiece(new Knight(new Vector2(1,0), true));
+        //AddPiece(new Bishop(new Vector2(2,0), true));
+        //AddPiece(new King(new Vector2(3,0), true));
+        AddPiece(new Queen(new Vector2(4,0), true));
+        //AddPiece(new Bishop(new Vector2(5,0), true));
+        //AddPiece(new Knight(new Vector2(6,0), true));
+        AddPiece(new Rook(new Vector2(7,0), true));
 
         for (int i = 0; i < 8; i++)
         {
-            AddPiece(new Pawn(new Vector2(i,1), false));
+            AddPiece(new Pawn(new Vector2(i,1), true));
         }
 
         //Bottom row
-        AddPiece(new Rook(new Vector2(0,7), true));
-        //AddPiece(new Knight(new Vector2(1,7), true));
-        //AddPiece(new Bishop(new Vector2(2,7), true));
-        AddPiece(new Queen(new Vector2(3,7), true));
-        //AddPiece(new King(new Vector2(4,7), true));
-        //AddPiece(new Bishop(new Vector2(5,7), true));
-        //AddPiece(new Knight(new Vector2(6,7), true));
-        AddPiece(new Rook(new Vector2(7,7), true));
+        AddPiece(new Rook(new Vector2(0,7), false));
+        //AddPiece(new Knight(new Vector2(1,7), false));
+        //AddPiece(new Bishop(new Vector2(2,7), false));
+        AddPiece(new Queen(new Vector2(3,7), false));
+        //AddPiece(new King(new Vector2(4,7), false));
+        //AddPiece(new Bishop(new Vector2(5,7), false));
+        //AddPiece(new Knight(new Vector2(6,7), false));
+        AddPiece(new Rook(new Vector2(7,7), false));
 
         for (int i = 0; i < 8; i++)
         {
-            AddPiece(new Pawn(new Vector2(i,6), true));
+            AddPiece(new Pawn(new Vector2(i,6), false));
         }
     }
 
@@ -104,7 +104,7 @@ public class ChessBoard
      */
     public static ChessPiece GetChessPieceAtPos(Vector2 pos)
     {
-        int index = PosToIndex(pos);
+        int index = GetPieceIdAtPos(pos);
         if(index == -1)
             return new EmptyPiece();
 
