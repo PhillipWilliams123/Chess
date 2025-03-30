@@ -17,7 +17,7 @@ public class App
     {
         //starts our window (should move to its own file for the setup)
         InitWindow(Globals.ScreenWidth, Globals.ScreenHeight, "Chess");
-        SetTargetFPS(60);
+        SetTargetFPS(100000);
 
         //create any classes and resource management
         PreInitialize();
@@ -79,5 +79,6 @@ public class App
 
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
+        Interaction.Update();
     }
 }

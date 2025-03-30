@@ -24,19 +24,19 @@ public class Pawn extends ChessPiece
         Vector2 captureRight = new Vector2(1, direction);
 
         if ((position.y == 1 || position.y == 6) && CheckInDirection(forwardOne, position, pos) == 2) {
-            ChessBoard.SetPieceIdAtPos(position, -1);
-            position = Vector2.Add(position, Vector2.Mul(forwardOne, 2));
-            ChessBoard.SetPieceIdAtPos(position, id);
+            TryTakePiece(Vector2.Add(position, Vector2.Mul(forwardOne, 2)));
+            SetToPosition(Vector2.Add(position, Vector2.Mul(forwardOne, 2)));
             return true;
         }
-        if (CheckInDirection(forwardOne, position, pos) == 1) {
-            ChessBoard.SetPieceIdAtPos(position, -1);
-            position = Vector2.Add(position, forwardOne);
-            ChessBoard.SetPieceIdAtPos(position, id);
+        if (CheckInDirection(forwardOne, position, pos) == 1)
+        {
+            TryTakePiece(Vector2.Add(position, forwardOne));
+            SetToPosition(Vector2.Add(position, forwardOne));
             return true;
         }
         if (CheckInDirection(captureLeft, position, pos) == 1 || CheckInDirection(captureRight, position, pos) == 1) {
-            position = pos;
+            TryTakePiece(pos);
+            SetToPosition(pos);
             return true;
         }
 
@@ -54,10 +54,11 @@ public class Pawn extends ChessPiece
         Vector2 captureRight = new Vector2(1, direction);
 
         if ((position.y == 1 || position.y == 6) && CheckInDirection(forwardOne, position, pos) == 2) {
-            return true;
+            return Vector2.Add(position, Vector2.Mul(forwardOne, 2)).equals(pos);
         }
-        if (CheckInDirection(forwardOne, position, pos) == 1) {
-            return true;
+        if (CheckInDirection(forwardOne, position, pos) == 1)
+        {
+            return Vector2.Add(position, forwardOne).equals(pos);
         }
         if (CheckInDirection(captureLeft, position, pos) == 1 || CheckInDirection(captureRight, position, pos) == 1) {
             return true;

@@ -32,9 +32,8 @@ public Queen(Vector2 position, boolean side) {
    for (Vector2 direction : directions) {
             int moveAmount = CheckInDirection(direction, position, pos);
             if (moveAmount != 0) {
-                ChessBoard.SetPieceIdAtPos(position, -1);
-                position = Vector2.Add(position, Vector2.Mul(direction, moveAmount));
-                ChessBoard.SetPieceIdAtPos(position, id);
+                TryTakePiece(Vector2.Add(position, Vector2.Mul(direction, moveAmount)));
+                SetToPosition(Vector2.Add(position, Vector2.Mul(direction, moveAmount)));
                 return true;
             }
         }
@@ -59,8 +58,9 @@ public Queen(Vector2 position, boolean side) {
         };
         for (Vector2 direction : directions) {
             int moveAmount = CheckInDirection(direction, position, pos);
-            if (moveAmount != 0) {
-                return true;
+            if(moveAmount != 0)
+            {
+                return Vector2.Add(position, Vector2.Mul(direction, moveAmount)).equals(pos);
             }
         }
 

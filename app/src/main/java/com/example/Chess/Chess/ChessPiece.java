@@ -3,6 +3,7 @@ import static com.raylib.Raylib.*;
 
 import com.example.Chess.Globals;
 import com.example.Chess.Vector2;
+import com.raylib.Colors;
 import com.raylib.Raylib;
 import com.raylib.Raylib.Texture;
 import static com.raylib.Colors.*;
@@ -57,9 +58,27 @@ public abstract class ChessPiece
             for (int j = 0; j < ChessBoard.boardSize; j++)
             {
                 if(CheckMove(new Vector2(i,j)))
-                    Raylib.DrawRectangle((int) (i * xScale), (int) (j * yScale), (int) xScale, (int) yScale, RED);
+                {
+                    Color color = GREEN;
+                    color.a((byte)(65 * (Math.sin(Raylib.GetTime() * 5) + 1) + 50));
+
+                    Raylib.DrawRectangle((int) (i * xScale), (int) (j * yScale), (int) xScale, (int) yScale, color);
+                }
             }
         }
+    }
+
+    /**
+     * Will set the piece to a position considering other systems in the ChessBoard
+     * @param position the position to go to
+     */
+    public void SetToPosition(Vector2 position)
+    {
+        //set our old position id to -1 as there is nothing there now
+        ChessBoard.SetPieceIdAtPos(this.position, -1);
+        this.position = position;
+        //set our new position id to be the id of this chess piece
+        ChessBoard.SetPieceIdAtPos(this.position, id);
     }
 
     /**
@@ -91,11 +110,15 @@ public abstract class ChessPiece
      */
     public int CheckInDirection(Vector2 dir, Vector2 pos, Vector2 wantedPos)
     {
-
-        //(Might have bugs im not sure, but it works with the rook in my testing)
-
         int moveCount = 0;
+        //since there is the case that we find a piece along the path we check
+        //we need to store this in case there is a piece along the path to the wanted position
+        //as if we return the first time we find a piece, it is likely not going to be along the direction
+        //that we want to go to
+        int moveCountPiece = 0;
         Vector2 posMove = pos;
+        boolean foundPos = false;
+
         while (true)
         {
             posMove = Vector2.Add(posMove, dir);
@@ -109,18 +132,48 @@ public abstract class ChessPiece
             //we have a piece in our moved position so this is the farthest we can go
             if(ChessBoard.GetPieceIdAtPos(posMove) != -1)
             {
-                return 0;
+                if(ChessBoard.GetChessPieceAtPos(posMove).side == this.side)
+                    return 0;
             }
 
             //we have reached where we wanted to go with no issues
-            if(posMove.Equals(wantedPos))
+            if(posMove.equals(wantedPos))
             {
+                //find the maximum we can go in the direction to the wanted position
+                posMove = pos;
+                for (int i = 0; i < moveCount + 1; i++)
+                {
+                    posMove = Vector2.Add(posMove, dir);
+                    if(ChessBoard.GetPieceIdAtPos(posMove) != -1)
+                    {
+                        return i + 1;
+                    }
+                }
                 moveCount++;
                 return moveCount;
             }
 
             moveCount++;
         }
+    }
+
+    /**
+     * Will try to take a piece at a position
+     * @param position the position we want to take
+     * @return true if its successful and false if it's not
+     */
+    public boolean TryTakePiece(Vector2 position)
+    {
+        //check if it's a valid position
+        if(ChessBoard.GetPieceIdAtPos(position) == -1)
+            return false;
+
+        //check which side its on to be the opposite of ours
+        if(ChessBoard.GetChessPieceAtPos(position).side == this.side)
+            return false;
+
+        ChessBoard.DeletePiece(position);
+        return true;
     }
 
     public abstract ChessPiece Copy();
