@@ -179,9 +179,8 @@ public class ChessBoard
         if(!PosInBounds(position))
             return;
 
-        int index = PosToIndex(position);
         int id = GetChessPieceAtPos(position).id;
         freeChessPieceIds.add(id);
-        chessPieces[index] = new EmptyPiece();
+        chessPieces[id] = new EmptyPiece();
     }
 }

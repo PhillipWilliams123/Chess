@@ -69,10 +69,8 @@ public class Rook extends ChessPiece {
         if(moveAmount != 0)
         {
             //set our old position id to -1 as there is nothing there now
-            ChessBoard.SetPieceIdAtPos(position, -1);
-            position = Vector2.Add(position, Vector2.Mul(direction, moveAmount));
-            //set our new position id to be the id of this chess piece
-            ChessBoard.SetPieceIdAtPos(position, id);
+            TryTakePiece(Vector2.Add(position, Vector2.Mul(direction, moveAmount)));
+            SetToPosition(Vector2.Add(position, Vector2.Mul(direction, moveAmount)));
             return true;
         }
 
@@ -127,7 +125,7 @@ public class Rook extends ChessPiece {
         }
 
         //if we can move to our selected position then we move and return true
-        return moveAmount != 0;
+        return Vector2.Add(position, Vector2.Mul(direction, moveAmount)).equals(pos);
     }
 
     @Override
