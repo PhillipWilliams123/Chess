@@ -27,10 +27,10 @@ public class Renderer {
             for (int y = 0; y < ChessBoard.boardSize; y++) {
                 if ((x + y) % 2 != 0) {
                     //some other color
-                    Raylib.DrawRectangle((int) (x * xScale), (int) (y * yScale), (int) xScale, (int) yScale, Globals.BoardColors[0]);
+                    Raylib.DrawRectangle((int) Math.floor(x * xScale), (int) Math.floor(y * yScale), (int) xScale + 1, (int) yScale + 1, Globals.BoardColors[0]);
                 } else {
                     //some color
-                    Raylib.DrawRectangle((int) (x * xScale), (int) (y * yScale), (int) xScale, (int) yScale, Globals.BoardColors[1]);
+                    Raylib.DrawRectangle((int) Math.floor(x * xScale), (int) Math.floor(y * yScale), (int) xScale + 1, (int) yScale + 1, Globals.BoardColors[1]);
                 }
             }
         }

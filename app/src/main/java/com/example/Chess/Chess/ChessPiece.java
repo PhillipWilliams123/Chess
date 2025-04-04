@@ -62,7 +62,7 @@ public abstract class ChessPiece
                     Color color = GREEN;
                     color.a((byte)(65 * (Math.sin(Raylib.GetTime() * 5) + 1) + 50));
 
-                    Raylib.DrawRectangle((int) (i * xScale), (int) (j * yScale), (int) xScale, (int) yScale, color);
+                    Raylib.DrawRectangle((int) Math.floor(i * xScale), (int) Math.floor(j * yScale), (int) xScale, (int) yScale, color);
                 }
             }
         }
@@ -124,7 +124,7 @@ public abstract class ChessPiece
             posMove = Vector2.Add(posMove, dir);
 
             //if we reach out of bounds we have either gone out of the board or never reached our wanted position
-            if(!ChessBoard.PosInBounds(posMove) || moveCount > 8)
+            if(!ChessBoard.PosInBounds(posMove))
             {
                 return 0;
             }
