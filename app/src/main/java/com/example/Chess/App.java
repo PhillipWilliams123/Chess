@@ -3,7 +3,9 @@ import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Chess.Pawn;
 import com.example.Chess.Chess.Queen;
 import com.example.Chess.Chess.Rook;
+import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Rendering.Renderer;
+import com.raylib.Raylib;
 import org.bytedeco.javacpp.BytePointer;
 
 import static com.raylib.Colors.*;
@@ -71,6 +73,24 @@ public class App
     public static void Update()
     {
         //Main update loop code
+
+        //for server and client testing
+        if(Raylib.IsKeyPressed(KEY_S))
+        {
+            //starts the server
+            if(!NetworkManager.initialized)
+                NetworkManager.InitServer();
+        }
+        if(Raylib.IsKeyPressed(KEY_C))
+        {
+            if(!NetworkManager.initialized)
+                NetworkManager.InitClient();
+        }
+
+        if(NetworkManager.initialized)
+        {
+            NetworkManager.Update();
+        }
     }
 
     public static void Render()
