@@ -4,6 +4,7 @@ import com.raylib.Raylib;
 
 public class Globals
 {
+    public static final String Version = "v0.15";
     public static final int ScreenWidth = 640;
     public static final int ScreenHeight = 640;
 

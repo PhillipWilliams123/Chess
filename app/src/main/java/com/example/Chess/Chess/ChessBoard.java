@@ -44,12 +44,12 @@ public class ChessBoard
     {
         //top row
         AddPiece(new Rook(new Vector2(0,0), true));
-        //AddPiece(new Knight(new Vector2(1,0), true));
-        //AddPiece(new Bishop(new Vector2(2,0), true));
-        //AddPiece(new King(new Vector2(3,0), true));
+        AddPiece(new Knight(new Vector2(1,0), true));
+        AddPiece(new Bishop(new Vector2(2,0), true));
+        AddPiece(new King(new Vector2(3,0), true));
         AddPiece(new Queen(new Vector2(4,0), true));
-        //AddPiece(new Bishop(new Vector2(5,0), true));
-        //AddPiece(new Knight(new Vector2(6,0), true));
+        AddPiece(new Bishop(new Vector2(5,0), true));
+        AddPiece(new Knight(new Vector2(6,0), true));
         AddPiece(new Rook(new Vector2(7,0), true));
 
         for (int i = 0; i < 8; i++)
@@ -59,12 +59,12 @@ public class ChessBoard
 
         //Bottom row
         AddPiece(new Rook(new Vector2(0,7), false));
-        //AddPiece(new Knight(new Vector2(1,7), false));
-        //AddPiece(new Bishop(new Vector2(2,7), false));
+        AddPiece(new Knight(new Vector2(1,7), false));
+        AddPiece(new Bishop(new Vector2(2,7), false));
         AddPiece(new Queen(new Vector2(3,7), false));
-        //AddPiece(new King(new Vector2(4,7), false));
-        //AddPiece(new Bishop(new Vector2(5,7), false));
-        //AddPiece(new Knight(new Vector2(6,7), false));
+        AddPiece(new King(new Vector2(4,7), false));
+        AddPiece(new Bishop(new Vector2(5,7), false));
+        AddPiece(new Knight(new Vector2(6,7), false));
         AddPiece(new Rook(new Vector2(7,7), false));
 
         for (int i = 0; i < 8; i++)
