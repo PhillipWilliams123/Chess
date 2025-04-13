@@ -16,11 +16,20 @@ public class ServerListenThread implements Runnable
     private int currentClients;
     private DataInputStream inputStream;
 
-    public ServerListenThread(int threadIndex, int currentClients)
+    /**
+     * Creates a server Listen Thread
+     * @param threadIndex the index that the thread is
+     */
+    public ServerListenThread(int threadIndex)
     {
         this.threadIndex = threadIndex;
     }
 
+    /**
+     * Will Start the thread to start listening
+     * @param currentClients what the current clients number is at
+     * @param inputStream the input stream for the client of this thread
+     */
     public void Start(int currentClients, InputStream inputStream)
     {
         this.currentClients = currentClients;
@@ -29,6 +38,9 @@ public class ServerListenThread implements Runnable
         thread.start();
     }
 
+    /**
+     * Runs the stuff for the thread to run async from the main thread
+     */
     public void run()
     {
         try

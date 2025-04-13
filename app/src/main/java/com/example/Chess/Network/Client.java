@@ -26,11 +26,20 @@ public class Client implements Runnable
 
     private byte[] bufferData;
 
+    /**
+     * Will initialize anything in the client
+     * Currently does nothing
+     */
     public void Init()
     {
 
     }
 
+    /**
+     * Will connect the client to a server socket
+     * @param ip the ip of the server
+     * @param port the port of the server
+     */
     public void Connect(String ip, int port)
     {
         try
@@ -52,6 +61,10 @@ public class Client implements Runnable
         }
     }
 
+    /**
+     * Will send a packet to the server
+     * @param packet the packet we want to send
+     */
     public void SendPacket(Packet packet)
     {
         //get the output stream so we can write to it
@@ -68,6 +81,9 @@ public class Client implements Runnable
         }
     }
 
+    /**
+     * Will update the client
+     */
     public void Update()
     {
         if(listenThread.isInterrupted())
@@ -171,6 +187,9 @@ public class Client implements Runnable
         }
     }
 
+    /**
+     * Will clean up and stop any streams
+     */
     public void Stop()
     {
         try

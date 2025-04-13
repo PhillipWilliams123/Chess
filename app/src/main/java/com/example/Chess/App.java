@@ -46,6 +46,7 @@ public class App
         
         //does some cleanup
         CloseWindow();
+        NetworkManager.CleanUp();
     }
 
     public static void PreInitialize()
