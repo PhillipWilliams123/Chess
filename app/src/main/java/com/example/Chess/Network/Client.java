@@ -1,19 +1,30 @@
 package com.example.Chess.Network;
 
+import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Globals;
-import com.example.Chess.Network.Packets.Pong;
-import com.example.Chess.Network.Packets.Version;
+import com.example.Chess.Network.Packets.PieceMovePacket;
+import com.example.Chess.Network.Packets.PongPacket;
+import com.example.Chess.Network.Packets.VersionPacket;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
-public class Client
+public class Client implements Runnable
 {
 
     public String ip;
     public int port;
     public Socket socket;
     public boolean connected;
+    public Thread listenThread;
+
+    private InputStream serverStream;
+    private OutputStream clientStream;
+    private DataInputStream serverInputStream;
+    private DataOutputStream clientOutStream;
+
+    private byte[] bufferData;
 
     public void Init()
     {
@@ -22,10 +33,21 @@ public class Client
 
     public void Connect(String ip, int port)
     {
-        try {
+        try
+        {
             socket = new Socket(ip, port);
+            serverStream = socket.getInputStream();
+            serverInputStream = new DataInputStream(serverStream);
+            clientStream = socket.getOutputStream();
+            clientOutStream = new DataOutputStream(clientStream);
             connected = true;
-        } catch (IOException e) {
+
+            //start the "Listening" thread to get the data
+            listenThread = new Thread(this);
+            listenThread.start();
+
+        } catch (IOException e)
+        {
             throw new RuntimeException(e);
         }
     }
@@ -35,10 +57,11 @@ public class Client
         //get the output stream so we can write to it
         try
         {
-            OutputStream outStream = socket.getOutputStream();
-            outStream.write(packet.PacketToByte());
-            outStream.flush();
-            outStream.close();
+            System.out.println("[CLIENT] sending packet " + packet.GetType());
+            byte[] data = packet.PacketToByte();
+            clientOutStream.writeInt(data.length);
+            clientOutStream.write(data);
+            clientOutStream.flush();
         } catch (IOException e)
         {
             throw new RuntimeException(e);
@@ -47,20 +70,33 @@ public class Client
 
     public void Update()
     {
-        //check if we have connected to a server before receiving packets
-        if(connected)
+        if(listenThread.isInterrupted())
         {
-            //get the input stream so we can access the data the server is sending
-            InputStream inputStream;
-            try
-            {
-                inputStream = socket.getInputStream();
-                HandlePacket(inputStream.readAllBytes());
-            } catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            //handle the data
+            if(bufferData != null)
+                HandlePacket(bufferData);
+            //restart the thread
+            listenThread = new Thread(this);
+            listenThread.start();
+        }
+    }
 
+    /**
+     * What will be run in a different thread
+     */
+    public void run()
+    {
+        //get the input stream so we can access the data the server is sending
+        try
+        {
+            int dataLength = serverInputStream.readInt();
+            bufferData = serverInputStream.readNBytes(dataLength);
+            System.out.println("[CLIENT] " + Arrays.toString(bufferData) + " client receive");
+            //we have received data so we stop the thread and process the data
+            listenThread.interrupt();
+        } catch (IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,6 +106,8 @@ public class Client
      */
     private void HandlePacket(byte[] data)
     {
+        //we need to stop the thread when we reach here because we have data to be processed
+
         //data is not a packet as they all start with an int
         //which is size 4
         if(data.length < 4)
@@ -88,6 +126,8 @@ public class Client
             throw new RuntimeException(e);
         }
 
+        System.out.println("[CLIENT] got packet " + type);
+
         switch (type)
         {
             case -1:
@@ -96,7 +136,7 @@ public class Client
             {
                 //ping packet
                 //behavior is to return a pong packet
-                Pong packet = new Pong();
+                PongPacket packet = new PongPacket();
                 SendPacket(packet);
                 break;
             }
@@ -110,22 +150,33 @@ public class Client
             {
                 //version packet
                 //behavior is to check version match
-                Version packet = new Version();
+                VersionPacket packet = new VersionPacket();
                 packet.ByteToPacket(data);
-                System.out.println("Server version: " + packet.version);
+                System.out.println("[CLIENT] Server version: " + packet.version);
                 if(!packet.version.equals(Globals.Version))
                 {
                     //create an error if they don't match
-                    throw new RuntimeException("Server and Client versions do not match");
+                    throw new RuntimeException("[CLIENT] Server and Client versions do not match");
                 }
                 break;
+            }
+            case 3:
+            {
+                //piece move packet
+                //behavior is to move the piece to the position
+                PieceMovePacket packet = new PieceMovePacket();
+                packet.ByteToPacket(data);
+                ChessBoard.chessPieces[packet.piece].TryMove(packet.position);
             }
         }
     }
 
     public void Stop()
     {
-        try {
+        try
+        {
+            serverStream.close();
+            clientStream.close();
             socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

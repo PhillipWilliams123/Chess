@@ -1,6 +1,8 @@
 package com.example.Chess;
 
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Network.NetworkManager;
+import com.example.Chess.Network.Packets.PieceMovePacket;
 import com.raylib.Raylib;
 
 import static com.raylib.Colors.*;
@@ -29,7 +31,14 @@ public class Interaction
             else
             {
                 ChessBoard.chessPieces[currentSelectedPiece].position = currentSelectedPosition;
-                ChessBoard.chessPieces[currentSelectedPiece].TryMove(mousePos);
+                if(ChessBoard.chessPieces[currentSelectedPiece].TryMove(mousePos))
+                {
+                    if(NetworkManager.initialized && NetworkManager.isClient)
+                    {
+                        PieceMovePacket packet = new PieceMovePacket(ChessBoard.chessPieces[currentSelectedPiece].position, currentSelectedPiece);
+                        NetworkManager.client.SendPacket(packet);
+                    }
+                }
                 currentSelectedPiece = -1;
             }
         }

@@ -1,8 +1,8 @@
 package com.example.Chess.Network;
 
-import com.example.Chess.Network.Packets.Ping;
-import com.example.Chess.Network.Packets.Pong;
-import com.example.Chess.Network.Packets.Version;
+import com.example.Chess.Network.Packets.PieceMovePacket;
+import com.example.Chess.Network.Packets.PongPacket;
+import com.example.Chess.Network.Packets.VersionPacket;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,8 +15,11 @@ public class Server
     public Socket[] clients;
     public int port;
     public String ip;
+    public ServerListenThread[] listenThreads;
+    public Thread joinThread;
 
     private int currentClients;
+    private int clientIncr;
 
     /**
      * Starts the server on a port
@@ -27,6 +30,7 @@ public class Server
     {
         this.ip = ip;
         this.port = port;
+        currentClients = 0;
         try
         {
             socket = new ServerSocket(port);
@@ -35,34 +39,76 @@ public class Server
             throw new RuntimeException(e);
         }
         clients = new Socket[MaxClients];
+        listenThreads = new ServerListenThread[MaxClients];
+        for (int i = 0; i < MaxClients; i++)
+        {
+            listenThreads[i] = new ServerListenThread(i, currentClients);
+        }
+        joinThread = new Thread(this::AcceptClients);
+        joinThread.start();
     }
 
     public void Update()
     {
+        for (int i = 0; i < currentClients; i++)
+        {
+            //restart the thread if it stopped
+            if(listenThreads[i].thread.isInterrupted())
+            {
+                if(listenThreads[i].bufferData != null)
+                {
+                    clientIncr++;
+                    //store an incrementer so the thread can process all clients
+                    if(clientIncr >= currentClients)
+                        clientIncr = 0;
+                    HandlePacket(listenThreads[i].bufferData, listenThreads[i].bufferClient);
+                }
+                try
+                {
+                    listenThreads[i].Start(currentClients, clients[i].getInputStream());
+                } catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        //restart the join thread if it is stopped
+        if(joinThread.isInterrupted())
+        {
+            joinThread = new Thread(this::AcceptClients);
+            joinThread.start();
+        }
+    }
+
+    /**
+     * Will accept clients on a thread
+     */
+    public void AcceptClients()
+    {
         //continue accepting clients until we fill the max allowed clients
-        //this is blocking so it will wait here until a client connects
         if(currentClients < MaxClients)
         {
             try
             {
-
+                //this is blocking so it will wait here until a client connects
                 clients[currentClients] = socket.accept();
+                //start the listen thread for this client
+                listenThreads[currentClients].Start(currentClients, clients[currentClients].getInputStream());
                 //send out what version this server is so we don't have weird behavior happening
                 //with different versions of the code interacting
-                SendPacket(new Version(), currentClients);
+                SendPacket(new VersionPacket(), currentClients);
+                currentClients++;
+                joinThread.interrupt();
             } catch (IOException e)
             {
                 throw new RuntimeException(e);
             }
-
-            currentClients++;
         }
         else
         {
             //all clients are connected
         }
-
-
     }
 
     /**
@@ -75,10 +121,12 @@ public class Server
         //get the output stream so we can write to it
         try
         {
-            OutputStream outStream = clients[client].getOutputStream();
-            outStream.write(packet.PacketToByte());
+            System.out.println("[SERVER] sending packet " + packet.GetType());
+            DataOutputStream outStream = new DataOutputStream(clients[client].getOutputStream());
+            byte[] data = packet.PacketToByte();
+            outStream.writeInt(data.length);
+            outStream.write(data);
             outStream.flush();
-            outStream.close();
         } catch (IOException e)
         {
             throw new RuntimeException(e);
@@ -91,19 +139,25 @@ public class Server
      */
     public void SendPacketAll(Packet packet)
     {
-        for (int i = 0; i < clients.length; i++)
+        for (int i = 0; i < currentClients; i++)
         {
-            //get the output stream so we can write to it
-            try
-            {
-                OutputStream outStream = clients[i].getOutputStream();
-                outStream.write(packet.PacketToByte());
-                outStream.flush();
-                outStream.close();
-            } catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            SendPacket(packet, i);
+        }
+    }
+
+    /**
+     * Send a packet to all clients excluding a client
+     * @param packet the packet to send
+     * @param client the client to exclude
+     */
+    public void SendPacketAllExclude(Packet packet, int client)
+    {
+        for (int i = 0; i < currentClients; i++)
+        {
+            if(i == client)
+                continue;
+
+            SendPacket(packet, i);
         }
     }
 
@@ -115,6 +169,8 @@ public class Server
      */
     private void HandlePacket(byte[] data, int client)
     {
+        //we need to stop the thread when we reach here because we have data to be processed
+
         //data is not a packet as they all start with an int
         //which is size 4
         if(data.length < 4)
@@ -133,6 +189,8 @@ public class Server
             throw new RuntimeException(e);
         }
 
+        System.out.println("[SERVER] got packet " + type);
+
         switch (type)
         {
             case -1:
@@ -141,7 +199,7 @@ public class Server
             {
                 //ping packet
                 //behavior is to return a pong packet
-                Pong packet = new Pong();
+                PongPacket packet = new PongPacket();
                 SendPacket(packet, client);
                 break;
             }
@@ -150,6 +208,32 @@ public class Server
                 //pong packet
                 break;
             }
+            case 3:
+            {
+                //piece move packet
+                //behavior is that we send this to all other clients excluding the sender
+                PieceMovePacket packet = new PieceMovePacket();
+                packet.ByteToPacket(data);
+                SendPacketAllExclude(packet, client);
+            }
+        }
+    }
+
+    public void Stop()
+    {
+        try {
+
+            for (int i = 0; i < currentClients; i++)
+            {
+                clients[i].getInputStream().close();
+                clients[i].getOutputStream().close();
+                clients[i].close();
+            }
+
+            socket.close();
+        } catch (Exception e)
+        {
+            throw new RuntimeException(e);
         }
     }
 }
