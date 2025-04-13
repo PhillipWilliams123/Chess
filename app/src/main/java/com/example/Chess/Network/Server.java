@@ -19,7 +19,6 @@ public class Server
     public Thread joinThread;
 
     private int currentClients;
-    private int clientIncr;
 
     /**
      * Starts the server on a port
@@ -40,9 +39,10 @@ public class Server
         }
         clients = new Socket[MaxClients];
         listenThreads = new ServerListenThread[MaxClients];
+        //create the listen threads for each client
         for (int i = 0; i < MaxClients; i++)
         {
-            listenThreads[i] = new ServerListenThread(i, currentClients);
+            listenThreads[i] = new ServerListenThread(i);
         }
         joinThread = new Thread(this::AcceptClients);
         joinThread.start();
@@ -57,14 +57,12 @@ public class Server
             {
                 if(listenThreads[i].bufferData != null)
                 {
-                    clientIncr++;
-                    //store an incrementer so the thread can process all clients
-                    if(clientIncr >= currentClients)
-                        clientIncr = 0;
+                    //since the thread stopped this means we got data and we can then parse it
                     HandlePacket(listenThreads[i].bufferData, listenThreads[i].bufferClient);
                 }
                 try
                 {
+                    //reset the thread
                     listenThreads[i].Start(currentClients, clients[i].getInputStream());
                 } catch (IOException e)
                 {
@@ -219,6 +217,9 @@ public class Server
         }
     }
 
+    /**
+     * Stops the server and cleans up streams
+     */
     public void Stop()
     {
         try {

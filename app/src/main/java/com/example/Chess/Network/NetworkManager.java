@@ -58,4 +58,19 @@ public class NetworkManager
             client.Update();
         }
     }
+
+    /**
+     * Cleans up server and client, whichever is started
+     */
+    public static void CleanUp()
+    {
+        if(isServer)
+        {
+            server.Stop();
+        }
+        if(isClient)
+        {
+            client.Stop();
+        }
+    }
 }
