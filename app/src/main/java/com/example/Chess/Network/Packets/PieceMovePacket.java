@@ -2,11 +2,25 @@ package com.example.Chess.Network.Packets;
 
 import com.example.Chess.Network.Packet;
 import com.example.Chess.Network.PacketTypes;
+import com.example.Chess.Vector2;
 
 import java.io.*;
 
-public class Pong extends Packet
+public class PieceMovePacket extends Packet
 {
+    public Vector2 position;
+    public int piece;
+
+    public PieceMovePacket()
+    {
+
+    }
+
+    public PieceMovePacket(Vector2 position, int piece)
+    {
+        this.position = position;
+        this.piece = piece;
+    }
 
     @Override
     public byte[] PacketToByte()
@@ -18,6 +32,9 @@ public class Pong extends Packet
         try
         {
             outStream.writeInt(GetType().ordinal());
+            outStream.writeDouble(position.x);
+            outStream.writeDouble(position.y);
+            outStream.writeInt(piece);
             outStream.flush();
             outStream.close();
         } catch (IOException e)
@@ -40,6 +57,8 @@ public class Pong extends Packet
             int type = inputStream.readInt();
             if(type != GetType().ordinal())
                 throw new RuntimeException("Byte data does not match packet" + type + " " + GetType());
+            position = new Vector2(inputStream.readDouble(), inputStream.readDouble());
+            piece = inputStream.readInt();
             inputStream.close();
         } catch (IOException e)
         {
@@ -50,6 +69,6 @@ public class Pong extends Packet
     @Override
     public PacketTypes GetType()
     {
-        return PacketTypes.pong;
+        return PacketTypes.pieceMove;
     }
 }

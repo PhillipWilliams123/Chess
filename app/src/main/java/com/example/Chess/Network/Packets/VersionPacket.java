@@ -5,10 +5,8 @@ import com.example.Chess.Network.Packet;
 import com.example.Chess.Network.PacketTypes;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
-public class Version extends Packet
+public class VersionPacket extends Packet
 {
     public String version;
 

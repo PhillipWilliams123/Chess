@@ -5,7 +5,7 @@ import com.example.Chess.Network.PacketTypes;
 
 import java.io.*;
 
-public class Ping extends Packet
+public class PongPacket extends Packet
 {
 
     @Override
@@ -50,6 +50,6 @@ public class Ping extends Packet
     @Override
     public PacketTypes GetType()
     {
-        return PacketTypes.ping;
+        return PacketTypes.pong;
     }
 }
