@@ -1,5 +1,7 @@
 package com.example.Chess.Network;
 
+import com.example.Chess.Network.Packets.DisconnectPacket;
+
 public class NetworkManager
 {
     public static final int globalPort = 58301;

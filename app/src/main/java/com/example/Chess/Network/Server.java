@@ -62,6 +62,10 @@ public class Server
                 }
                 try
                 {
+                    //dont reset the thread if the client is null
+                    if(clients[i] == null)
+                        continue;
+
                     //reset the thread
                     listenThreads[i].Start(currentClients, clients[i].getInputStream());
                 } catch (IOException e)
@@ -91,6 +95,7 @@ public class Server
             {
                 //this is blocking so it will wait here until a client connects
                 clients[currentClients] = socket.accept();
+                System.out.println("[SERVER] got client " + clients[currentClients].getInetAddress());
                 //start the listen thread for this client
                 listenThreads[currentClients].Start(currentClients, clients[currentClients].getInputStream());
                 //send out what version this server is so we don't have weird behavior happening
@@ -213,6 +218,31 @@ public class Server
                 PieceMovePacket packet = new PieceMovePacket();
                 packet.ByteToPacket(data);
                 SendPacketAllExclude(packet, client);
+                break;
+            }
+            case 4:
+            {
+                //disconnect packet
+                //behavior is to remove the client that disconnected
+                //stop the thread for the client
+                try {
+                    listenThreads[client].thread.join(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                listenThreads[client].thread.interrupt();
+                clients[client] = null;
+                currentClients--;
+
+                //restart the join thread to allow new clients to join
+                joinThread.interrupt();
+                if(joinThread.isInterrupted())
+                {
+                    joinThread = new Thread(this::AcceptClients);
+                    joinThread.start();
+                }
+
+                break;
             }
         }
     }
