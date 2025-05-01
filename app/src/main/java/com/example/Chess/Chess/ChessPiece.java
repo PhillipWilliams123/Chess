@@ -34,7 +34,7 @@ public abstract class ChessPiece
     {
         //resize the images to the correct size
         Image tempImage = LoadImage(GetImageLocation());
-        int size = Globals.ScreenWidth / ChessBoard.boardSize;
+        int size = Globals.ChessWidth / ChessBoard.boardSize;
         ImageResize(tempImage, size, size);
         image = LoadTextureFromImage(tempImage);
     }
@@ -50,7 +50,7 @@ public abstract class ChessPiece
 
     public void DrawPossibleMoves()
     {
-        double xScale = Globals.ScreenWidth / (double)ChessBoard.boardSize;
+        double xScale = Globals.ChessWidth / (double)ChessBoard.boardSize;
         double yScale = Globals.ScreenHeight / (double)ChessBoard.boardSize;
 
         for (int i = 0; i < ChessBoard.boardSize; i++)
@@ -80,7 +80,7 @@ public abstract class ChessPiece
         //set our new position id to be the id of this chess piece
         ChessBoard.SetPieceIdAtPos(this.position, id);
     }
-
+  
     /**
      * Will get the image location for the piece. Is abstract so each specific piece has its own implementation and can be used here
      * @return the image location

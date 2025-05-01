@@ -1,5 +1,7 @@
 package com.example.Chess;
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.Rook;
+import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Chess.Pawn;
 import com.example.Chess.Chess.Queen;
 import com.example.Chess.Chess.Rook;
@@ -19,7 +21,7 @@ public class App
     public static void main(String[] args)
     {
         //starts our window (should move to its own file for the setup)
-        InitWindow(Globals.ScreenWidth, Globals.ScreenHeight, "Chess");
+        InitWindow(Globals.ChessWidth+Globals.UIWidth, Globals.ScreenHeight, "Chess");
         SetTargetFPS(100000);
 
         //create any classes and resource management
