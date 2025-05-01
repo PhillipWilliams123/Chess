@@ -1,6 +1,10 @@
 package com.example.Chess;
 import com.example.Chess.Chess.ChessBoard;
+<<<<<<< Updated upstream
 import com.example.Chess.Chess.Rook;
+=======
+import com.example.Chess.Network.NetworkManager;
+>>>>>>> Stashed changes
 import com.example.Chess.Rendering.Renderer;
 import org.bytedeco.javacpp.BytePointer;
 
@@ -14,8 +18,13 @@ public class App
     public static void main(String[] args)
     {
         //starts our window (should move to its own file for the setup)
+<<<<<<< Updated upstream
         InitWindow(Globals.ScreenWidth, Globals.ScreenHeight, "Chess");
         SetTargetFPS(60);
+=======
+        InitWindow(Globals.ChessWidth+Globals.UIWidth, Globals.ScreenHeight, "Chess");
+        SetTargetFPS(100000);
+>>>>>>> Stashed changes
 
         //create any classes and resource management
         PreInitialize();

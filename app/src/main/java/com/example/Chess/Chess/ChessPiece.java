@@ -3,6 +3,10 @@ import static com.raylib.Raylib.*;
 
 import com.example.Chess.Globals;
 import com.example.Chess.Vector2;
+<<<<<<< Updated upstream
+=======
+import com.raylib.Raylib;
+>>>>>>> Stashed changes
 import com.raylib.Raylib.Texture;
 import static com.raylib.Colors.*;
 
@@ -32,7 +36,7 @@ public abstract class ChessPiece
     {
         //resize the images to the correct size
         Image tempImage = LoadImage(GetImageLocation());
-        int size = Globals.ScreenWidth / ChessBoard.boardSize;
+        int size = Globals.ChessWidth / ChessBoard.boardSize;
         ImageResize(tempImage, size, size);
         image = LoadTextureFromImage(tempImage);
     }
@@ -46,6 +50,42 @@ public abstract class ChessPiece
         DrawTexture(image, (int)scaledPos.x, (int)scaledPos.y, Globals.ChessPieceHue);
     }
 
+<<<<<<< Updated upstream
+=======
+    public void DrawPossibleMoves()
+    {
+        double xScale = Globals.ChessWidth / (double)ChessBoard.boardSize;
+        double yScale = Globals.ScreenHeight / (double)ChessBoard.boardSize;
+
+        for (int i = 0; i < ChessBoard.boardSize; i++)
+        {
+            for (int j = 0; j < ChessBoard.boardSize; j++)
+            {
+                if(CheckMove(new Vector2(i,j)))
+                {
+                    Color color = GREEN;
+                    color.a((byte)(65 * (Math.sin(Raylib.GetTime() * 5) + 1) + 50));
+
+                    Raylib.DrawRectangle((int) Math.floor(i * xScale), (int) Math.floor(j * yScale), (int) xScale, (int) yScale, color);
+                }
+            }
+        }
+    }
+
+    /**
+     * Will set the piece to a position considering other systems in the ChessBoard
+     * @param position the position to go to
+     */
+    public void SetToPosition(Vector2 position)
+    {
+        //set our old position id to -1 as there is nothing there now
+        ChessBoard.SetPieceIdAtPos(this.position, -1);
+        this.position = position;
+        //set our new position id to be the id of this chess piece
+        ChessBoard.SetPieceIdAtPos(this.position, id);
+    }
+
+>>>>>>> Stashed changes
     /**
      * Will get the image location for the piece. Is abstract so each specific piece has its own implementation and can be used here
      * @return the image location

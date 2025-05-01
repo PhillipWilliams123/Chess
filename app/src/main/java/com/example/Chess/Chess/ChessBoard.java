@@ -109,7 +109,7 @@ public class ChessBoard
      */
     public static Vector2 ScalePosToBoardSpace(Vector2 pos)
     {
-        return Vector2.Mul(pos, Vector2.Div(new Vector2(Globals.ScreenWidth, Globals.ScreenHeight), boardSize));
+        return Vector2.Mul(pos, Vector2.Div(new Vector2(Globals.ChessWidth, Globals.ScreenHeight), boardSize));
     }
 
     /**

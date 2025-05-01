@@ -4,9 +4,14 @@ import com.raylib.Raylib;
 
 public class Globals
 {
+<<<<<<< Updated upstream
     public static final int ScreenWidth = 640;
+=======
+    public static final String Version = "v0.15";
+    public static final int ChessWidth = 640;
+>>>>>>> Stashed changes
     public static final int ScreenHeight = 640;
-
+    public static final int UIWidth = 360;
     //Where the games files should be located and stuff
     public static String RunDirectory;
     public static String ResourceDirectory;
