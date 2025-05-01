@@ -31,7 +31,7 @@ public class Vector2
         return x * x + y * y;
     }
 
-    public boolean Equals(Vector2 a)
+    public boolean equals(Vector2 a)
     {
         return x == a.x && y == a.y;
     }
@@ -44,6 +44,15 @@ public class Vector2
     public static double Dot(Vector2 a, Vector2 b)
     {
         return (a.x * b.x) + (a.y * b.y);
+    }
+    public static Vector2 Lerp(Vector2 a, Vector2 b, double amount)
+    {
+        return Add(Mul(a, 1.0 - amount), Mul(b, amount));
+    }
+
+    public static Vector2 Floor(Vector2 a)
+    {
+        return new Vector2(Math.floor(a.x), Math.floor(a.y));
     }
 
     public static Vector2 Add(Vector2 a, Vector2 b)

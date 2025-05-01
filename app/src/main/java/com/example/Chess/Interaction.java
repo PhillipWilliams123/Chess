@@ -16,6 +16,7 @@ public class Interaction
     {
         //convert mouse position to the board position
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
+
         mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ChessWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
         mousePos = Vector2.Floor(mousePos);
 

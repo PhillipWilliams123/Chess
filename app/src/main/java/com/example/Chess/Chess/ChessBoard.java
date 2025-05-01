@@ -35,7 +35,41 @@ public class ChessBoard
         for (int i = 0; i < boardSize * boardSize; i++)
         {
            chessPieces[i] = new EmptyPiece();
+           chessPieceIds[i] = -1;
            freeChessPieceIds.add(i);
+        }
+    }
+
+    public static void InitStandardGame()
+    {
+        //top row
+        AddPiece(new Rook(new Vector2(0,0), true));
+        AddPiece(new Knight(new Vector2(1,0), true));
+        AddPiece(new Bishop(new Vector2(2,0), true));
+        AddPiece(new King(new Vector2(3,0), true));
+        AddPiece(new Queen(new Vector2(4,0), true));
+        AddPiece(new Bishop(new Vector2(5,0), true));
+        AddPiece(new Knight(new Vector2(6,0), true));
+        AddPiece(new Rook(new Vector2(7,0), true));
+
+        for (int i = 0; i < 8; i++)
+        {
+            AddPiece(new Pawn(new Vector2(i,1), true));
+        }
+
+        //Bottom row
+        AddPiece(new Rook(new Vector2(0,7), false));
+        AddPiece(new Knight(new Vector2(1,7), false));
+        AddPiece(new Bishop(new Vector2(2,7), false));
+        AddPiece(new Queen(new Vector2(3,7), false));
+        AddPiece(new King(new Vector2(4,7), false));
+        AddPiece(new Bishop(new Vector2(5,7), false));
+        AddPiece(new Knight(new Vector2(6,7), false));
+        AddPiece(new Rook(new Vector2(7,7), false));
+
+        for (int i = 0; i < 8; i++)
+        {
+            AddPiece(new Pawn(new Vector2(i,6), false));
         }
     }
 
@@ -70,7 +104,7 @@ public class ChessBoard
      */
     public static ChessPiece GetChessPieceAtPos(Vector2 pos)
     {
-        int index = PosToIndex(pos);
+        int index = GetPieceIdAtPos(pos);
         if(index == -1)
             return new EmptyPiece();
 
@@ -123,8 +157,7 @@ public class ChessBoard
             return;
 
         //check if there's already a piece there
-        ChessPiece checkPiece = GetChessPieceAtPos(piece.position);
-        if(checkPiece.id != -1)
+        if(GetPieceIdAtPos(piece.position) != -1)
             return;
 
         //we are good to add a piece
@@ -146,9 +179,8 @@ public class ChessBoard
         if(!PosInBounds(position))
             return;
 
-        int index = PosToIndex(position);
         int id = GetChessPieceAtPos(position).id;
         freeChessPieceIds.add(id);
-        chessPieces[index] = new EmptyPiece();
+        chessPieces[id] = new EmptyPiece();
     }
 }
