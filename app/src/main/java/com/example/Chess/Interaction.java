@@ -16,7 +16,8 @@ public class Interaction
     {
         //convert mouse position to the board position
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
-        mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ScreenWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
+
+        mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ChessWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
         mousePos = Vector2.Floor(mousePos);
 
         HighlightSpot();
@@ -56,12 +57,12 @@ public class Interaction
     {
         //draw a square of a color to show what position is highlighted
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
-        mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ScreenWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
+        mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ChessWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
 
         Raylib.Color highColor = GREEN;
         highColor.a((byte)(65 * (Math.sin(Raylib.GetTime() * 5) + 1)));
 
-        double xScale = Globals.ScreenWidth / (double)ChessBoard.boardSize;
+        double xScale = Globals.ChessWidth / (double)ChessBoard.boardSize;
         double yScale = Globals.ScreenHeight / (double)ChessBoard.boardSize;
         mousePos = Vector2.Floor(mousePos);
         Raylib.DrawRectangle((int) (mousePos.x * xScale), (int) (mousePos.y * yScale), (int) xScale, (int) yScale, highColor);

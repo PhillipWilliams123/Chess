@@ -4,8 +4,6 @@ import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Globals;
 import com.raylib.Raylib;
 
-import static com.raylib.Colors.*;
-
 /**
  * @author ericl
  */
@@ -21,7 +19,7 @@ public class Renderer {
         //creating a checkerboard pattern
 
         //the scale for the screen
-        double xScale = Globals.ScreenWidth / (double)ChessBoard.boardSize;
+        double xScale = Globals.ChessWidth / (double)ChessBoard.boardSize;
         double yScale = Globals.ScreenHeight / (double)ChessBoard.boardSize;
         for (int x = 0; x < ChessBoard.boardSize; x++) {
             for (int y = 0; y < ChessBoard.boardSize; y++) {
