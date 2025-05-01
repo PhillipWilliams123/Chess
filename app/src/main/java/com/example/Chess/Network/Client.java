@@ -2,6 +2,7 @@ package com.example.Chess.Network;
 
 import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Globals;
+import com.example.Chess.Network.Packets.DisconnectPacket;
 import com.example.Chess.Network.Packets.PieceMovePacket;
 import com.example.Chess.Network.Packets.PongPacket;
 import com.example.Chess.Network.Packets.VersionPacket;
@@ -50,6 +51,7 @@ public class Client implements Runnable
             clientStream = socket.getOutputStream();
             clientOutStream = new DataOutputStream(clientStream);
             connected = true;
+            System.out.println("[CLIENT] Started on " + socket.getInetAddress());
 
             //start the "Listening" thread to get the data
             listenThread = new Thread(this);
@@ -192,8 +194,11 @@ public class Client implements Runnable
      */
     public void Stop()
     {
+        NetworkManager.client.SendPacket(new DisconnectPacket());
+
         try
         {
+            listenThread.interrupt();
             serverStream.close();
             clientStream.close();
             socket.close();

@@ -6,4 +6,5 @@ public enum PacketTypes
     pong,
     version,
     pieceMove,
+    disonnect,
 }
