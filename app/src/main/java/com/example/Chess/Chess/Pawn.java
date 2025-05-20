@@ -60,8 +60,12 @@ public class Pawn extends ChessPiece
         {
             return Vector2.Add(position, forwardOne).equals(pos);
         }
-        if (CheckInDirection(captureLeft, position, pos) == 1 || CheckInDirection(captureRight, position, pos) == 1) {
-            return true;
+        if (CheckInDirection(captureLeft, position, pos) == 1) {
+            return Vector2.Add(position, captureLeft).equals(pos);
+        }
+        if(CheckInDirection(captureRight, position, pos) == 1)
+        {
+            return Vector2.Add(position, captureRight).equals(pos);
         }
 
         return false;
