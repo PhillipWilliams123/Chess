@@ -80,7 +80,7 @@ public abstract class ChessPiece
         //set our new position id to be the id of this chess piece
         ChessBoard.SetPieceIdAtPos(this.position, id);
     }
-  
+
     /**
      * Will get the image location for the piece. Is abstract so each specific piece has its own implementation and can be used here
      * @return the image location
@@ -159,6 +159,16 @@ public abstract class ChessPiece
 
     /**
      * Will try to take a piece at a position
+     * THIS WILL NEED TO BE CALLED BEFORE SETTING THE POSITION OF THE PIECE IF TAKING A PIECE
+     *
+     * TryTakePiece(pos)
+     * SetToPosition(pos)
+     *
+     * NOT
+     *
+     * SetToPosition(pos)
+     * TryTakePiece(pos)
+     *
      * @param position the position we want to take
      * @return true if its successful and false if it's not
      */

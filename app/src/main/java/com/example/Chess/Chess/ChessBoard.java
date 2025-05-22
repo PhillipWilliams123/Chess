@@ -34,9 +34,9 @@ public class ChessBoard
         //initialize each piece to an empty piece
         for (int i = 0; i < boardSize * boardSize; i++)
         {
-           chessPieces[i] = new EmptyPiece();
-           chessPieceIds[i] = -1;
-           freeChessPieceIds.add(i);
+            chessPieces[i] = new EmptyPiece();
+            chessPieceIds[i] = -1;
+            freeChessPieceIds.add(i);
         }
     }
 
