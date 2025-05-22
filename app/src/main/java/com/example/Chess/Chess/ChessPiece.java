@@ -15,7 +15,7 @@ public abstract class ChessPiece
 {
     public int id;
     public Vector2 position;
-    private Texture image;
+    public Texture image;
     /**
      * False for white
      * True for black
