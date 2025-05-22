@@ -39,15 +39,17 @@ public class Pawn extends ChessPiece
                 return true;
             }
         }
-        if (CheckInDirection(captureLeft, position, pos) == 1) {
-            TryTakePiece(pos);
-            SetToPosition(pos);
+
+        int moveAmount = CheckInDirection(captureLeft, position, pos);
+        if (moveAmount != 0) {
+            TryTakePiece(Vector2.Add(position, captureLeft));
+            SetToPosition(Vector2.Add(position, captureLeft));
             return true;
         }
-        if(CheckInDirection(captureRight, position, pos) == 1)
-        {
-            TryTakePiece(pos);
-            SetToPosition(pos);
+        moveAmount = CheckInDirection(captureRight, position, pos);
+        if (moveAmount != 0) {
+            TryTakePiece(Vector2.Add(position, captureRight));
+            SetToPosition(Vector2.Add(position, captureRight));
             return true;
         }
 
