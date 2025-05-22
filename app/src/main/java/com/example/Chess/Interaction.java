@@ -15,7 +15,7 @@ public class Interaction {
     //Stores position when piece was selected
     private static Vector2 currentSelectedPosition;
 
-    //Track whose turn it is (true = white's turn, false = black's turn)
+    //Track whose turn it is (true = black's turn; false = white's turn)
     private static boolean isBlackTurn = true;
 
     
