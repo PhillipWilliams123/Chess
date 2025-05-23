@@ -22,7 +22,7 @@ public class App
     {
         //starts our window (should move to its own file for the setup)
         InitWindow(Globals.ChessWidth+Globals.UIWidth, Globals.ScreenHeight, "Chess");
-        SetTargetFPS(100000);
+        SetTargetFPS(10000);
 
         //create any classes and resource management
         PreInitialize();
@@ -72,6 +72,8 @@ public class App
         //initialize any systems
         ChessBoard.Init();
         ChessBoard.InitStandardGame();
+
+        mainRenderer.Draw2d = true;
     }
 
     public static void Update()
@@ -101,6 +103,13 @@ public class App
     {
         //any drawing commands should be put in here or rendering code
 
+        if(Raylib.GetKeyPressed() == KEY_F)
+        {
+            mainRenderer.Draw2d = false;
+        }
+
+        if(!mainRenderer.Draw2d)
+            mainRenderer.Draw3DChessBoard();
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
         Interaction.Update();

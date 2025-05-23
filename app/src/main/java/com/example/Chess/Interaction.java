@@ -11,9 +11,13 @@ public class Interaction
 {
     private static int currentSelectedPiece = -1;
     private static Vector2 currentSelectedPosition;
+    public static boolean disableInteraction;
 
     public static void Update()
     {
+        if(disableInteraction)
+            return;
+
         //convert mouse position to the board position
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
 
