@@ -15,7 +15,7 @@ public abstract class ChessPiece
 {
     public int id;
     public Vector2 position;
-    private Texture image;
+    public Texture image;
     /**
      * False for white
      * True for black
@@ -34,7 +34,7 @@ public abstract class ChessPiece
     {
         //resize the images to the correct size
         Image tempImage = LoadImage(GetImageLocation());
-        int size = Globals.ScreenWidth / ChessBoard.boardSize;
+        int size = Globals.ChessWidth / ChessBoard.boardSize;
         ImageResize(tempImage, size, size);
         image = LoadTextureFromImage(tempImage);
     }
@@ -50,7 +50,7 @@ public abstract class ChessPiece
 
     public void DrawPossibleMoves()
     {
-        double xScale = Globals.ScreenWidth / (double)ChessBoard.boardSize;
+        double xScale = Globals.ChessWidth / (double)ChessBoard.boardSize;
         double yScale = Globals.ScreenHeight / (double)ChessBoard.boardSize;
 
         for (int i = 0; i < ChessBoard.boardSize; i++)
@@ -159,6 +159,16 @@ public abstract class ChessPiece
 
     /**
      * Will try to take a piece at a position
+     * THIS WILL NEED TO BE CALLED BEFORE SETTING THE POSITION OF THE PIECE IF TAKING A PIECE
+     *
+     * TryTakePiece(pos)
+     * SetToPosition(pos)
+     *
+     * NOT
+     *
+     * SetToPosition(pos)
+     * TryTakePiece(pos)
+     *
      * @param position the position we want to take
      * @return true if its successful and false if it's not
      */

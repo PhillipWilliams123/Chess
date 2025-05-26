@@ -34,9 +34,9 @@ public class ChessBoard
         //initialize each piece to an empty piece
         for (int i = 0; i < boardSize * boardSize; i++)
         {
-           chessPieces[i] = new EmptyPiece();
-           chessPieceIds[i] = -1;
-           freeChessPieceIds.add(i);
+            chessPieces[i] = new EmptyPiece();
+            chessPieceIds[i] = -1;
+            freeChessPieceIds.add(i);
         }
     }
 
@@ -44,12 +44,12 @@ public class ChessBoard
     {
         //top row
         AddPiece(new Rook(new Vector2(0,0), true));
-        //AddPiece(new Knight(new Vector2(1,0), true));
-        //AddPiece(new Bishop(new Vector2(2,0), true));
-        //AddPiece(new King(new Vector2(3,0), true));
+        AddPiece(new Knight(new Vector2(1,0), true));
+        AddPiece(new Bishop(new Vector2(2,0), true));
+        AddPiece(new King(new Vector2(3,0), true));
         AddPiece(new Queen(new Vector2(4,0), true));
-        //AddPiece(new Bishop(new Vector2(5,0), true));
-        //AddPiece(new Knight(new Vector2(6,0), true));
+        AddPiece(new Bishop(new Vector2(5,0), true));
+        AddPiece(new Knight(new Vector2(6,0), true));
         AddPiece(new Rook(new Vector2(7,0), true));
 
         for (int i = 0; i < 8; i++)
@@ -59,12 +59,12 @@ public class ChessBoard
 
         //Bottom row
         AddPiece(new Rook(new Vector2(0,7), false));
-        //AddPiece(new Knight(new Vector2(1,7), false));
-        //AddPiece(new Bishop(new Vector2(2,7), false));
+        AddPiece(new Knight(new Vector2(1,7), false));
+        AddPiece(new Bishop(new Vector2(2,7), false));
         AddPiece(new Queen(new Vector2(3,7), false));
-        //AddPiece(new King(new Vector2(4,7), false));
-        //AddPiece(new Bishop(new Vector2(5,7), false));
-        //AddPiece(new Knight(new Vector2(6,7), false));
+        AddPiece(new King(new Vector2(4,7), false));
+        AddPiece(new Bishop(new Vector2(5,7), false));
+        AddPiece(new Knight(new Vector2(6,7), false));
         AddPiece(new Rook(new Vector2(7,7), false));
 
         for (int i = 0; i < 8; i++)
@@ -143,7 +143,7 @@ public class ChessBoard
      */
     public static Vector2 ScalePosToBoardSpace(Vector2 pos)
     {
-        return Vector2.Mul(pos, Vector2.Div(new Vector2(Globals.ScreenWidth, Globals.ScreenHeight), boardSize));
+        return Vector2.Mul(pos, Vector2.Div(new Vector2(Globals.ChessWidth, Globals.ScreenHeight), boardSize));
     }
 
     /**

@@ -5,13 +5,13 @@ public class Pawn extends ChessPiece
 {
 
     //Needs a constructor for the position
-  public Pawn(Vector2 position, boolean side) {
+    public Pawn(Vector2 position, boolean side) {
         this.side = side;
         this.position = position;
     }
     @Override
     public String GetImageLocation() {
-       return Globals.ImageDirectory + Globals.PieceImages[0 + (6 * (side ? 1 : 0))];
+        return Globals.ImageDirectory + Globals.PieceImages[0 + (6 * (side ? 1 : 0))];
     }
 
     @Override
@@ -23,25 +23,43 @@ public class Pawn extends ChessPiece
         Vector2 captureLeft = new Vector2(-1, direction);
         Vector2 captureRight = new Vector2(1, direction);
 
-        if ((position.y == 1 || position.y == 6) && CheckInDirection(forwardOne, position, pos) == 2) {
-            TryTakePiece(Vector2.Add(position, Vector2.Mul(forwardOne, 2)));
-            SetToPosition(Vector2.Add(position, Vector2.Mul(forwardOne, 2)));
-            return true;
+        if ((position.y == 1 || position.y == 6) && CheckInDirection(forwardOne, position, pos) == 2)
+        {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, Vector2.Mul(forwardOne, 2))) == -1)
+            {
+                SetToPosition(Vector2.Add(position, Vector2.Mul(forwardOne, 2)));
+                return true;
+            }
         }
         if (CheckInDirection(forwardOne, position, pos) == 1)
         {
-            TryTakePiece(Vector2.Add(position, forwardOne));
-            SetToPosition(Vector2.Add(position, forwardOne));
-            return true;
-        }
-        if (CheckInDirection(captureLeft, position, pos) == 1 || CheckInDirection(captureRight, position, pos) == 1) {
-            TryTakePiece(pos);
-            SetToPosition(pos);
-            return true;
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, forwardOne)) == -1)
+            {
+                SetToPosition(Vector2.Add(position, forwardOne));
+                return true;
+            }
         }
 
+        int moveAmount = CheckInDirection(captureLeft, position, pos);
+        if (moveAmount != 0) {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, captureLeft)) != -1) {
+                TryTakePiece(Vector2.Add(position, captureLeft));
+                SetToPosition(Vector2.Add(position, captureLeft));
+                return true;
+            }
+        }
+        moveAmount = CheckInDirection(captureRight, position, pos);
+        if (moveAmount != 0) {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, captureRight)) != -1) {
+                TryTakePiece(Vector2.Add(position, captureRight));
+                SetToPosition(Vector2.Add(position, captureRight));
+                return true;
+            }
+        }
+
+
         return false;
-    
+
     }
 
     @Override
@@ -54,14 +72,28 @@ public class Pawn extends ChessPiece
         Vector2 captureRight = new Vector2(1, direction);
 
         if ((position.y == 1 || position.y == 6) && CheckInDirection(forwardOne, position, pos) == 2) {
-            return Vector2.Add(position, Vector2.Mul(forwardOne, 2)).equals(pos);
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, Vector2.Mul(forwardOne, 2))) == -1)
+            {
+                return Vector2.Add(position, Vector2.Mul(forwardOne, 2)).equals(pos);
+            }
         }
         if (CheckInDirection(forwardOne, position, pos) == 1)
         {
-            return Vector2.Add(position, forwardOne).equals(pos);
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, forwardOne)) == -1)
+            {
+                return Vector2.Add(position, forwardOne).equals(pos);
+            }
         }
-        if (CheckInDirection(captureLeft, position, pos) == 1 || CheckInDirection(captureRight, position, pos) == 1) {
-            return true;
+        if (CheckInDirection(captureLeft, position, pos) == 1) {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, captureLeft)) != -1) {
+                return Vector2.Add(position, captureLeft).equals(pos);
+            }
+        }
+        if(CheckInDirection(captureRight, position, pos) == 1)
+        {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, captureRight)) != -1) {
+                return Vector2.Add(position, captureRight).equals(pos);
+            }
         }
 
         return false;
@@ -69,6 +101,6 @@ public class Pawn extends ChessPiece
 
     @Override
     public ChessPiece Copy() {
-          return new Pawn(this.position, this.side);
+        return new Pawn(this.position, this.side);
     }
 }
