@@ -2,14 +2,15 @@ package com.example.Chess.Network;
 
 import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Globals;
-import com.example.Chess.Network.Packets.DisconnectPacket;
-import com.example.Chess.Network.Packets.PieceMovePacket;
-import com.example.Chess.Network.Packets.PongPacket;
-import com.example.Chess.Network.Packets.VersionPacket;
+import com.example.Chess.Network.Packets.*;
+import com.example.Chess.UI.UiButton;
+import com.example.Chess.Vector2;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+
+import static com.example.Chess.UI.UI.buttons;
 
 public class Client implements Runnable
 {
@@ -185,6 +186,25 @@ public class Client implements Runnable
                 PieceMovePacket packet = new PieceMovePacket();
                 packet.ByteToPacket(data);
                 ChessBoard.chessPieces[packet.piece].TryMove(packet.position);
+            }
+            case 5:
+            {
+                //piece move packet
+                //behavior is to move the piece to the position
+                DrawPacket packet = new DrawPacket();
+                packet.ByteToPacket(data);
+                buttons[5] = new UiButton(new Vector2(640, 400), new Vector2(360, 100), "");
+
+
+            }
+            case 6:
+            {
+                //piece move packet
+                //behavior is to move the piece to the position
+                SurrenderPacket packet = new SurrenderPacket();
+                packet.ByteToPacket(data);
+
+
             }
         }
     }

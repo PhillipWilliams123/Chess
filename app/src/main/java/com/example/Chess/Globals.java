@@ -14,7 +14,7 @@ public class Globals
     public static String RunDirectory;
     public static String ResourceDirectory;
     public static String ImageDirectory;
-
+    public static String SoundDirectory;
     /**
      * List of the piece file names
      * starting with white, and black can be got by adding 6 to the index
@@ -33,6 +33,12 @@ public class Globals
                     "Black_Rook.png",
                     "Black_Queen.png",
                     "Black_King.png",
+            };
+    public static String[]PieceSounds =
+            {
+                    "capture.mp3",
+                    "move.mp3",
+                    "notify.mp3",
             };
 
     public static Raylib.Color[] BoardColors = {BROWN, BEIGE};
