@@ -4,6 +4,7 @@ import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Chess.ChessPiece;
 import com.example.Chess.Globals;
 import com.raylib.Raylib;
+import com.example.Chess.UI.UI;
 
 import static com.raylib.Raylib.*;
 import static com.raylib.Colors.*;

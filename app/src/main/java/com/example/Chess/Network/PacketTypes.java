@@ -7,4 +7,6 @@ public enum PacketTypes
     version,
     pieceMove,
     disonnect,
+    draw,
+    surrender,
 }
