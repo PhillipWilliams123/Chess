@@ -183,6 +183,7 @@ public abstract class ChessPiece
             return false;
 
         ChessBoard.DeletePiece(position);
+        ChessSound.PlayCapture();
         return true;
     }
 

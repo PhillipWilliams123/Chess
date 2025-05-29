@@ -2,6 +2,7 @@ package com.example.Chess;
 
 import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Chess.ChessPiece;
+import com.example.Chess.Chess.ChessSound;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PieceMovePacket;
 import com.raylib.Raylib;
@@ -44,7 +45,7 @@ public class Interaction {
             if (currentSelectedPiece == -1) {
                 //First click - select piece
                 ChessPiece piece = ChessBoard.GetChessPieceAtPos(mousePos);
-                
+
                 //Only allow selecting pieces of the current player's color
                 if (piece.id != -1 && piece.side != isBlackTurn) {
                     currentSelectedPosition = mousePos;
@@ -66,7 +67,7 @@ public class Interaction {
                         NetworkManager.client.SendPacket(packet);
                     }
                 }
-                
+                ChessSound.PlayMove();
                 //De-select piece regardless of move success
                 currentSelectedPiece = -1;
             }
