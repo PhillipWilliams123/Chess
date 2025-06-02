@@ -39,6 +39,15 @@ public class Globals
                     "capture.mp3",
                     "move.mp3",
                     "notify.mp3",
+                    "button.mp3",
+                    "meme1.mp3",
+                    "meme2.mp3",
+                    "meme3.mp3",
+                    "meme4.mp3",
+                    "meme5.mp3",
+                    "meme6.mp3",
+                    "meme7.mp3",
+                    "meme8.mp3",
             };
 
     public static Raylib.Color[] BoardColors = {BROWN, BEIGE};
