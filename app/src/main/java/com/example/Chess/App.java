@@ -8,10 +8,14 @@ import com.example.Chess.Chess.Rook;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PingPacket;
 import com.example.Chess.Rendering.Renderer;
+import com.example.Chess.UI.MutiUi;
 import com.example.Chess.UI.UI;
+import com.example.Chess.UI.UiMenu;
 import com.raylib.Raylib;
 import org.bytedeco.javacpp.BytePointer;
 
+import static com.example.Chess.UI.UI.IsMenuOpen;
+import static com.example.Chess.UI.UI.IsMutiMenuOpen;
 import static com.raylib.Colors.*;
 import static com.raylib.Raylib.*;
 import static com.raylib.Raylib.WindowShouldClose;
@@ -80,9 +84,10 @@ public class App
 
         //initialize any systems
         ChessBoard.Init();
-ChessSound.Initialize();
-
+        ChessSound.Initialize();
+        UiMenu.Initialize();
         UI.Initialize();
+        MutiUi.Initialize();
 
         mainRenderer.Draw2d = true;
     }
@@ -90,7 +95,7 @@ ChessSound.Initialize();
     public static void Update()
     {
         //Main update loop code
-        UI.updateButtons();
+
         ChessSound.PlayNotify();
         //for server and client testing
         if(Raylib.IsKeyPressed(KEY_S))
@@ -110,6 +115,13 @@ ChessSound.Initialize();
         {
             NetworkManager.Update();
         }
+        if(!IsMenuOpen&&!IsMutiMenuOpen) {
+            UI.updateButtons();
+        }else if (IsMenuOpen&&!IsMutiMenuOpen){
+            UiMenu.updateButtons();
+        }else{
+            MutiUi.updateButtons();
+        }
     }
 
     public static void Render()
@@ -126,6 +138,15 @@ ChessSound.Initialize();
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
         Interaction.Update();
-        UI.RenderButtons();
+        if(!IsMenuOpen&&!IsMutiMenuOpen) {
+            UI.RenderButtons();
+        }else if (IsMenuOpen&&!IsMutiMenuOpen){
+            UiMenu.RenderButtons();
+        }else{
+            MutiUi.RenderButtons();
+        }
+
+
+
     }
 }
