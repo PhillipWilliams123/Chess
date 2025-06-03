@@ -9,11 +9,13 @@ import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PingPacket;
 import com.example.Chess.Rendering.Renderer;
 import com.example.Chess.UI.MutiUi;
+import com.example.Chess.UI.QuantumUiButton;
 import com.example.Chess.UI.UI;
 import com.example.Chess.UI.UiMenu;
 import com.raylib.Raylib;
 import org.bytedeco.javacpp.BytePointer;
 
+import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
 import static com.example.Chess.UI.UI.IsMenuOpen;
 import static com.example.Chess.UI.UI.IsMutiMenuOpen;
 import static com.raylib.Colors.*;
@@ -91,7 +93,7 @@ public class App
         NetworkManager.Init();
 
         NetworkManager.InitLocaterClient();
-
+        QuantumUiButton.Initialize();
         mainRenderer.Draw2d = true;
     }
 
@@ -103,6 +105,9 @@ public class App
 
         NetworkManager.Update();
         UI.updateButtons();
+        if(IsQuantumUiOpen){
+            QuantumUiButton.updateButtons();
+        }
     }
 
     public static void Render()
@@ -120,6 +125,9 @@ public class App
         mainRenderer.DrawPieces();
         Interaction.Update();
         UI.RenderButtons();
+        if(IsQuantumUiOpen){
+            QuantumUiButton.RenderButtons();
+        }
 
 
 

@@ -5,6 +5,11 @@ import com.example.Chess.Chess.ChessPiece;
 import com.example.Chess.Chess.ChessSound;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PieceMovePacket;
+
+import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
+import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
+
+import com.example.Chess.UI.QuantumUiButton;
 import com.raylib.Raylib;
 
 import static com.raylib.Colors.*;
@@ -46,6 +51,12 @@ public class Interaction {
             HighlightSpot();
         }
 
+        //Highlight the current mouse position
+        HighlightSpot();
+        if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
+            CheckRightClick();
+            IsQuantumUiOpen = true;
+        }
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
 
             //if we are connected to a server block movement if its not our turn
@@ -65,11 +76,11 @@ public class Interaction {
         //If we have a selected piece, show its possible moves and follow mouse
         if (currentSelectedPiece != -1) {
             ChessPiece piece = ChessBoard.chessPieces[currentSelectedPiece];
-            
+
             //Draw possible moves
             piece.position = currentSelectedPosition;
             piece.DrawPossibleMoves();
-            
+
             //Make piece follow mouse (if within chessboard)
             if (Raylib.GetMousePosition().x() < Globals.ChessWidth - 1) {
                 piece.position = mousePos;

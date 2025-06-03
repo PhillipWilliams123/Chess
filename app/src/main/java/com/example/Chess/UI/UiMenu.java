@@ -49,7 +49,6 @@ public class UiMenu {
     }
     public static void RenderButtons()
     {
-        System.out.println("aoijs");
         for(UiButton button : MenuButtons)
         {
             if (button != null) {
