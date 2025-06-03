@@ -5,6 +5,7 @@ import com.example.Chess.Globals;
 import com.example.Chess.Network.Packets.*;
 import com.example.Chess.UI.UiButton;
 import com.example.Chess.Vector2;
+import com.raylib.Raylib;
 
 import java.io.*;
 import java.net.Socket;
@@ -42,7 +43,7 @@ public class Client implements Runnable
      * @param ip the ip of the server
      * @param port the port of the server
      */
-    public void Connect(String ip, int port)
+    public boolean Connect(String ip, int port)
     {
         try
         {
@@ -52,16 +53,21 @@ public class Client implements Runnable
             clientStream = socket.getOutputStream();
             clientOutStream = new DataOutputStream(clientStream);
             connected = true;
-            System.out.println("[CLIENT] Started on " + socket.getInetAddress());
+            System.out.println("[CLIENT] Started connect to " + ip + ":" + port);
 
             //start the "Listening" thread to get the data
             listenThread = new Thread(this);
             listenThread.start();
 
+            this.ip = ip;
+            this.port = port;
+
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+            System.out.println("[CLIENT] Could not connect to " + ip + ":" + port);
+            return false;
         }
+        return true;
     }
 
     /**
@@ -73,7 +79,8 @@ public class Client implements Runnable
         //get the output stream so we can write to it
         try
         {
-            System.out.println("[CLIENT] sending packet " + packet.GetType());
+            if(!NetworkManager.disablePacketLogging)
+                System.out.println("[CLIENT] sending packet " + packet.GetType());
             byte[] data = packet.PacketToByte();
             clientOutStream.writeInt(data.length);
             clientOutStream.write(data);
@@ -110,12 +117,13 @@ public class Client implements Runnable
         {
             int dataLength = serverInputStream.readInt();
             bufferData = serverInputStream.readNBytes(dataLength);
-            System.out.println("[CLIENT] " + Arrays.toString(bufferData) + " client receive");
+            if(!NetworkManager.disablePacketLogging)
+                System.out.println("[CLIENT] " + Arrays.toString(bufferData) + " client receive");
             //we have received data so we stop the thread and process the data
             listenThread.interrupt();
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+            System.out.println("[CLIENT] " + e.getMessage());
         }
     }
 
@@ -145,7 +153,8 @@ public class Client implements Runnable
             throw new RuntimeException(e);
         }
 
-        System.out.println("[CLIENT] got packet " + type);
+        if(!NetworkManager.disablePacketLogging)
+            System.out.println("[CLIENT] got packet " + PacketTypes.types[type]);
 
         switch (type)
         {
@@ -171,7 +180,8 @@ public class Client implements Runnable
                 //behavior is to check version match
                 VersionPacket packet = new VersionPacket();
                 packet.ByteToPacket(data);
-                System.out.println("[CLIENT] Server version: " + packet.version);
+                if(!NetworkManager.disablePacketLogging)
+                    System.out.println("[CLIENT] Server version: " + packet.version);
                 if(!packet.version.equals(Globals.Version))
                 {
                     //create an error if they don't match
@@ -186,6 +196,14 @@ public class Client implements Runnable
                 PieceMovePacket packet = new PieceMovePacket();
                 packet.ByteToPacket(data);
                 ChessBoard.chessPieces[packet.piece].TryMove(packet.position);
+
+                break;
+            }
+            case 4:
+            {
+                //if the client gets a disconnect we stop the client
+                Stop();
+                break;
             }
             case 5:
             {
@@ -195,7 +213,7 @@ public class Client implements Runnable
                 packet.ByteToPacket(data);
                 buttons[5] = new UiButton(new Vector2(640, 400), new Vector2(360, 100), "");
 
-
+                break;
             }
             case 6:
             {
@@ -204,9 +222,31 @@ public class Client implements Runnable
                 SurrenderPacket packet = new SurrenderPacket();
                 packet.ByteToPacket(data);
 
+                break;
+            }
+            case 7:
+            {
+                //server info packet
+                ServerInfoPacket packet = new ServerInfoPacket();
+                packet.ByteToPacket(data);
 
+                LocaterServer.ips[packet.id] = packet.ip;
+                LocaterServer.ports[packet.id] = packet.port;
+                LocaterServer.players[packet.id] = packet.players;
+
+                break;
+            }
+            case 8:
+            {
+                //server packet request
+                break;
             }
         }
+    }
+
+    public void Disconnect()
+    {
+        NetworkManager.client.SendPacket(new DisconnectPacket());
     }
 
     /**
@@ -214,13 +254,11 @@ public class Client implements Runnable
      */
     public void Stop()
     {
-        NetworkManager.client.SendPacket(new DisconnectPacket());
+        NetworkManager.isClient = false;
 
         try
         {
             listenThread.interrupt();
-            serverStream.close();
-            clientStream.close();
             socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

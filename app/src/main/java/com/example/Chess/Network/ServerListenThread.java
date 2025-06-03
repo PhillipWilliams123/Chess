@@ -52,15 +52,19 @@ public class ServerListenThread implements Runnable
                 return;
             }
 
-            System.out.println("[SERVER] start receive on thread " + threadIndex);
+            if(!NetworkManager.disablePacketLogging)
+                System.out.println("[SERVER] start receive on thread " + threadIndex);
             int dataLength = inputStream.readInt();
             bufferData = inputStream.readNBytes(dataLength);
             bufferClient = threadIndex;
-            System.out.println("[SERVER] " + Arrays.toString(bufferData) + " server receive");
+            if(!NetworkManager.disablePacketLogging)
+                System.out.println("[SERVER] " + Arrays.toString(bufferData) + " server receive");
             thread.interrupt();
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+            //the stream has stopped for some reason so terminate
+            thread.interrupt();
+            return;
         }
     }
 }

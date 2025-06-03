@@ -58,9 +58,9 @@ public class App
         }
         
         //does some cleanup
+        CloseAudioDevice();
         CloseWindow();
         NetworkManager.CleanUp();
-        CloseAudioDevice();
     }
 
     public static void PreInitialize()
@@ -90,6 +90,9 @@ public class App
         UiMenu.Initialize();
         UI.Initialize();
         MutiUi.Initialize();
+        NetworkManager.Init();
+
+        NetworkManager.InitLocaterClient();
         QuantumUiButton.Initialize();
         mainRenderer.Draw2d = true;
     }
@@ -99,31 +102,9 @@ public class App
         //Main update loop code
 
         ChessSound.PlayNotify();
-        //for server and client testing
-        if(Raylib.IsKeyPressed(KEY_S))
-        {
 
-            //starts the server
-            if(!NetworkManager.initialized)
-                NetworkManager.InitServer();
-        }
-        if(Raylib.IsKeyPressed(KEY_C))
-        {
-            if(!NetworkManager.initialized)
-                NetworkManager.InitClient();
-        }
-
-        if(NetworkManager.initialized)
-        {
-            NetworkManager.Update();
-        }
-        if(!IsMenuOpen&&!IsMutiMenuOpen) {
-            UI.updateButtons();
-        }else if (IsMenuOpen&&!IsMutiMenuOpen){
-            UiMenu.updateButtons();
-        }else{
-            MutiUi.updateButtons();
-        }
+        NetworkManager.Update();
+        UI.updateButtons();
         if(IsQuantumUiOpen){
             QuantumUiButton.updateButtons();
         }
@@ -143,13 +124,7 @@ public class App
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
         Interaction.Update();
-        if(!IsMenuOpen&&!IsMutiMenuOpen) {
-            UI.RenderButtons();
-        }else if (IsMenuOpen&&!IsMutiMenuOpen){
-            UiMenu.RenderButtons();
-        }else{
-            MutiUi.RenderButtons();
-        }
+        UI.RenderButtons();
         if(IsQuantumUiOpen){
             QuantumUiButton.RenderButtons();
         }

@@ -9,4 +9,9 @@ public enum PacketTypes
     disonnect,
     draw,
     surrender,
+    serverInfo,
+    serverInfoRequest,
+    identifier;
+
+    public static PacketTypes[] types = PacketTypes.values();
 }
