@@ -5,8 +5,22 @@ import com.example.Chess.Network.PacketTypes;
 
 import java.io.*;
 
-public class DisconnectPacket extends Packet
+public class StartGamePacket extends Packet
 {
+
+    //tell the other player which side they are
+    public boolean otherSide;
+
+    public StartGamePacket()
+    {
+
+    }
+
+    public StartGamePacket(boolean otherSide)
+    {
+        this.otherSide = otherSide;
+    }
+
     @Override
     public byte[] PacketToByte()
     {
@@ -17,6 +31,7 @@ public class DisconnectPacket extends Packet
         try
         {
             outStream.writeInt(GetType().ordinal());
+            outStream.writeBoolean(otherSide);
             outStream.flush();
             outStream.close();
         } catch (IOException e)
@@ -39,6 +54,7 @@ public class DisconnectPacket extends Packet
             int type = inputStream.readInt();
             if(type != GetType().ordinal())
                 throw new RuntimeException("Byte data does not match packet" + type + " " + GetType());
+            otherSide = inputStream.readBoolean();
             inputStream.close();
         } catch (IOException e)
         {
@@ -49,6 +65,6 @@ public class DisconnectPacket extends Packet
     @Override
     public PacketTypes GetType()
     {
-        return PacketTypes.disconnect;
+        return PacketTypes.startGame;
     }
 }

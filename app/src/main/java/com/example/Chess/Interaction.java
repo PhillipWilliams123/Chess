@@ -23,7 +23,9 @@ public class Interaction {
     public static boolean disableInteraction;
 
     //Track whose turn it is (true = black's turn; false = white's turn)
-    private static boolean isBlackTurn = true;
+    private static boolean isBlackTurn = false;
+    //if we are in a multiplayer game we need to lock our movement
+    public static boolean isOurTurn = false;
 
     
     //Checks if it is black's turn
@@ -43,6 +45,12 @@ public class Interaction {
         mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ChessWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
         mousePos = Vector2.Floor(mousePos);
 
+        if(ChessBoard.GetPieceIdAtPos(mousePos) != -1)
+        {
+            //Highlight the current mouse position
+            HighlightSpot();
+        }
+
         //Highlight the current mouse position
         HighlightSpot();
         if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
@@ -50,50 +58,68 @@ public class Interaction {
             IsQuantumUiOpen = true;
         }
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
-            if (currentSelectedPiece == -1) {
-                //First click - select piece
-                ChessPiece piece = ChessBoard.GetChessPieceAtPos(mousePos);
 
-                //Only allow selecting pieces of the current player's color
-                if (piece.id != -1 && piece.side != isBlackTurn) {
-                    currentSelectedPosition = mousePos;
-                    currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
+            //if we are connected to a server block movement if its not our turn
+            if(NetworkManager.isClient)
+            {
+                if(isOurTurn)
+                {
+                    HandlePieceMove(mousePos);
                 }
             }
-            else {
-                //Second click - try to move the piece
-                ChessPiece selectedPiece = ChessBoard.chessPieces[currentSelectedPiece];
-                
-                //Reset position temporarily for move validation
-                selectedPiece.position = currentSelectedPosition;
-                
-                if (selectedPiece.TryMove(mousePos)) {
-                    //Valid move - switch turns
-                    isBlackTurn = !isBlackTurn;
-                    
-                    if (NetworkManager.initialized && NetworkManager.isClient) {
-                        PieceMovePacket packet = new PieceMovePacket(selectedPiece.position, currentSelectedPiece);
-                        NetworkManager.client.SendPacket(packet);
-                    }
-                }
-                ChessSound.PlayMove();
-                //De-select piece regardless of move success
-                currentSelectedPiece = -1;
+            else
+            {
+                HandlePieceMove(mousePos);
             }
         }
 
         //If we have a selected piece, show its possible moves and follow mouse
         if (currentSelectedPiece != -1) {
             ChessPiece piece = ChessBoard.chessPieces[currentSelectedPiece];
-            
+
             //Draw possible moves
             piece.position = currentSelectedPosition;
             piece.DrawPossibleMoves();
-            
+
             //Make piece follow mouse (if within chessboard)
             if (Raylib.GetMousePosition().x() < Globals.ChessWidth - 1) {
                 piece.position = mousePos;
             }
+        }
+    }
+
+    private static void HandlePieceMove(Vector2 mousePos)
+    {
+        if (currentSelectedPiece == -1) {
+            //First click - select piece
+            ChessPiece piece = ChessBoard.GetChessPieceAtPos(mousePos);
+
+            //Only allow selecting pieces of the current player's color
+            if (piece.id != -1 && piece.side == isBlackTurn) {
+                currentSelectedPosition = mousePos;
+                currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
+            }
+        } else {
+            //Second click - try to move the piece
+            ChessPiece selectedPiece = ChessBoard.chessPieces[currentSelectedPiece];
+
+            //Reset position temporarily for move validation
+            selectedPiece.position = currentSelectedPosition;
+
+            if (selectedPiece.TryMove(mousePos)) {
+                //Valid move - switch turns
+                isBlackTurn = !isBlackTurn;
+
+                if (NetworkManager.isClient)
+                {
+                    PieceMovePacket packet = new PieceMovePacket(selectedPiece.position, currentSelectedPiece, isBlackTurn);
+                    NetworkManager.client.SendPacket(packet);
+                    isOurTurn = false;
+                }
+            }
+            ChessSound.PlayMove();
+            //De-select piece regardless of move success
+            currentSelectedPiece = -1;
         }
     }
 
@@ -109,7 +135,12 @@ public class Interaction {
         mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ChessWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
 
         //Highlight color (green for current player's turn, red for opponent's turn)
-        Raylib.Color highColor = isBlackTurn ? GREEN : RED;
+        Raylib.Color highColor = RED;
+        if(isOurTurn)
+        {
+            if(ChessBoard.GetChessPieceAtPos(mousePos).side == isBlackTurn)
+                highColor = GREEN;
+        }
         highColor.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1)));
 
         double xScale = Globals.ChessWidth / (double) ChessBoard.boardSize;

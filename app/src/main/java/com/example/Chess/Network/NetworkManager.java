@@ -17,7 +17,7 @@ public class NetworkManager
 
     public static Client locaterClient;
     public static LocaterServer locaterServer;
-    public static boolean disablePacketLogging = false;
+    public static boolean disablePacketLogging = true;
 
     public static void Init()
     {

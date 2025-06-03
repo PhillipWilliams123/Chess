@@ -72,8 +72,6 @@ public class Renderer
         if(radius > ChessBoard.boardSize)
             radius = ChessBoard.boardSize;
 
-        System.out.println(GetFPS());
-
         //if win or lose can set the background color
         Raylib.ClearBackground(GREEN);
 
