@@ -6,12 +6,13 @@ public enum PacketTypes
     pong,
     version,
     pieceMove,
-    disonnect,
+    disconnect,
     draw,
     surrender,
     serverInfo,
     serverInfoRequest,
-    identifier;
+    identifier,
+    startGame;
 
     public static PacketTypes[] types = PacketTypes.values();
 }

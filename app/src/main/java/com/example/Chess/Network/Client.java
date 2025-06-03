@@ -2,6 +2,7 @@ package com.example.Chess.Network;
 
 import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Globals;
+import com.example.Chess.Interaction;
 import com.example.Chess.Network.Packets.*;
 import com.example.Chess.UI.UiButton;
 import com.example.Chess.Vector2;
@@ -197,6 +198,10 @@ public class Client implements Runnable
                 packet.ByteToPacket(data);
                 ChessBoard.chessPieces[packet.piece].TryMove(packet.position);
 
+                //we have received a move and can set our player to be able to move
+                Interaction.isOurTurn = true;
+                Interaction.SetTurn(packet.turn);
+
                 break;
             }
             case 4:
@@ -207,11 +212,10 @@ public class Client implements Runnable
             }
             case 5:
             {
-                //piece move packet
+                //Draw packet
                 //behavior is to move the piece to the position
                 DrawPacket packet = new DrawPacket();
                 packet.ByteToPacket(data);
-                buttons[5] = new UiButton(new Vector2(640, 400), new Vector2(360, 100), "");
 
                 break;
             }
@@ -239,6 +243,18 @@ public class Client implements Runnable
             case 8:
             {
                 //server packet request
+                break;
+            }
+            case 10:
+            {
+                StartGamePacket packet = new StartGamePacket();
+                packet.ByteToPacket(data);
+
+                Interaction.isOurTurn = !packet.otherSide;
+
+                //start game packet
+                ChessBoard.Init();
+                ChessBoard.InitStandardGame();
                 break;
             }
         }

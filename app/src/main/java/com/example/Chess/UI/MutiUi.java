@@ -1,16 +1,17 @@
 package com.example.Chess.UI;
 
-import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Network.LocaterServer;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.ServerInfoRequestPacket;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
-import static com.example.Chess.UI.UiButton.CheckIsSoundenabled;
+
 import static com.raylib.Colors.*;
 
 public class MutiUi {
     public static UiButton[] buttons;
+
+    public static ToolTip locaterServerToolTip = new ToolTip(new Vector2(640 + (360 / 2), 100), new Vector2(360 / 2, 100), "Loc Server\nAlready Started");
 
     public static void Initialize()
     {
@@ -35,12 +36,19 @@ public class MutiUi {
             UpdateServerInfos();
         }
 
-        if(buttons[0].CheckStartButtonClicked())
+        if(NetworkManager.isLocaterClient)
+        {
+            buttons[2].lock = true;
+            locaterServerToolTip.show = true;
+            locaterServerToolTip.Update();
+        }
+
+        if(buttons[0].IsButtonClicked())
         {
             UI.IsMutiMenuOpen = false;
 
         }
-        if(buttons[1].CheckStartButtonClicked())
+        if(buttons[1].IsButtonClicked())
         {
             if(!NetworkManager.isServer && !NetworkManager.isClient)
             {
@@ -59,7 +67,7 @@ public class MutiUi {
                 buttons[1].text = "Start Server";
             }
         }
-        if(buttons[2].CheckStartButtonClicked())
+        if(buttons[2].IsButtonClicked())
         {
             NetworkManager.InitLocaterServer();
         }
@@ -74,7 +82,7 @@ public class MutiUi {
                 }
             }
 
-            if(buttons[i + 3].CheckStartButtonClicked())
+            if(buttons[i + 3].IsButtonClicked())
             {
                 if(!NetworkManager.isClient)
                 {
@@ -120,6 +128,8 @@ public class MutiUi {
 
             Raylib.DrawText(LocaterServer.ips[i] + " Players: " + LocaterServer.players[i], 640, 20 * i + 200, 20, BLACK);
         }
+
+        locaterServerToolTip.Draw();
     }
 
     public static void UpdateServerInfos()

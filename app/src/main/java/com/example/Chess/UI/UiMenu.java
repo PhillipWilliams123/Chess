@@ -1,10 +1,8 @@
 package com.example.Chess.UI;
 
-import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Vector2;
-import com.raylib.Raylib;
+
 import static com.example.Chess.UI.UI.IsMenuOpen;
-import static com.example.Chess.UI.UI.IsMutiMenuOpen;
 import static com.example.Chess.UI.UiButton.CheckIsSoundenabled;
 
 public class UiMenu {
@@ -23,26 +21,26 @@ public class UiMenu {
 
     }
     public static void updateButtons(){
-        if(MenuButtons[0].CheckStartButtonClicked())
+        if(MenuButtons[0].IsButtonClicked())
         {
             IsMenuOpen = false;
 
         }
-        if(MenuButtons[1].CheckStartButtonClicked())
+        if(MenuButtons[1].IsButtonClicked())
         {
             CheckIsSoundenabled();
 
         }
-        if(MenuButtons[2].CheckStartButtonClicked())
+        if(MenuButtons[2].IsButtonClicked())
         {
 
         }
 
-        if(MenuButtons[3].CheckStartButtonClicked())
+        if(MenuButtons[3].IsButtonClicked())
         {
 
         }
-        if(MenuButtons[4].CheckStartButtonClicked())
+        if(MenuButtons[4].IsButtonClicked())
         {
 
         }
