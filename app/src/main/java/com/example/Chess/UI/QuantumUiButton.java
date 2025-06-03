@@ -23,8 +23,6 @@ public class QuantumUiButton {
 
     public static void updateButtons() {
         if (Quantumbuttons[0].CheckStartButtonClicked()) {
-
-
 //Quantum Action
         }
 
