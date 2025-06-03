@@ -22,11 +22,11 @@ public class QuantumUiButton {
     }
 
     public static void updateButtons() {
-        if (Quantumbuttons[0].CheckStartButtonClicked()) {
+        if (Quantumbuttons[0].IsButtonClicked()) {
 //Quantum Action
         }
 
-        if (Quantumbuttons[1].CheckStartButtonClicked()) {
+        if (Quantumbuttons[1].IsButtonClicked()) {
 
             IsQuantumUiOpen = false;
         }
