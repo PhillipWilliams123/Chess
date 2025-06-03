@@ -5,6 +5,11 @@ import com.example.Chess.Chess.ChessPiece;
 import com.example.Chess.Chess.ChessSound;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PieceMovePacket;
+
+import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
+import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
+
+import com.example.Chess.UI.QuantumUiButton;
 import com.raylib.Raylib;
 
 import static com.raylib.Colors.*;
@@ -40,7 +45,10 @@ public class Interaction {
 
         //Highlight the current mouse position
         HighlightSpot();
-
+        if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
+            CheckRightClick();
+            IsQuantumUiOpen = true;
+        }
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
             if (currentSelectedPiece == -1) {
                 //First click - select piece
@@ -51,7 +59,8 @@ public class Interaction {
                     currentSelectedPosition = mousePos;
                     currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
                 }
-            } else {
+            }
+            else {
                 //Second click - try to move the piece
                 ChessPiece selectedPiece = ChessBoard.chessPieces[currentSelectedPiece];
                 
