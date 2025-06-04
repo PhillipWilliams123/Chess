@@ -1,5 +1,6 @@
 package com.example.Chess.Network;
 
+import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Interaction;
 import com.example.Chess.Network.Packets.*;
 
@@ -79,6 +80,9 @@ public class Server
         {
             System.out.println("[SERVER] Started without connection to Locater Server");
         }
+
+        Interaction.Init();
+        ChessBoard.Init();
 
         return true;
     }
@@ -318,6 +322,10 @@ public class Server
      */
     public void Stop()
     {
+        if(NetworkManager.isLocaterClient)
+        {
+            NetworkManager.locaterClient.SendPacket(new ServerInfoPacket(0, 0, 0, ""));
+        }
         NetworkManager.isServer = false;
 
         try {

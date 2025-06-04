@@ -85,6 +85,7 @@ public class App
         InitAudioDevice();
 
         //initialize any systems
+        Interaction.Init();
         ChessBoard.Init();
         ChessSound.Initialize();
         UiMenu.Initialize();

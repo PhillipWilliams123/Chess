@@ -1,5 +1,6 @@
 package com.example.Chess.UI;
 
+import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Vector2;
 
 import static com.example.Chess.UI.UI.IsMenuOpen;
@@ -35,6 +36,11 @@ public class UiMenu {
         {
 
         }
+
+        MenuButtons[3].lock = !NetworkManager.isClient;
+        MenuButtons[4].lock = !NetworkManager.isClient;
+        MenuButtons[3].draw = NetworkManager.isClient;
+        MenuButtons[4].draw = NetworkManager.isClient;
 
         if(MenuButtons[3].IsButtonClicked())
         {

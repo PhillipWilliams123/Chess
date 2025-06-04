@@ -36,8 +36,18 @@ public class Interaction {
     public static void SetTurn(boolean isBlackTurn) {
         Interaction.isBlackTurn = isBlackTurn;
     }
+
+    public static void Init()
+    {
+        isBlackTurn = false;
+        isOurTurn = false;
+        if(!NetworkManager.isClient)
+            isOurTurn = true;
+    }
     
-    public static void Update() {
+    public static void Update()
+    {
+
         //Convert mouse position to the board position
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
         

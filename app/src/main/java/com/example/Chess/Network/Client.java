@@ -250,6 +250,7 @@ public class Client implements Runnable
                 StartGamePacket packet = new StartGamePacket();
                 packet.ByteToPacket(data);
 
+                Interaction.Init();
                 Interaction.isOurTurn = !packet.otherSide;
 
                 //start game packet
