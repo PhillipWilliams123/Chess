@@ -21,6 +21,7 @@ public class UiButton {
      * Will lock the button from being clicked
      */
     public boolean lock;
+    public boolean draw;
 
     public UiButton(Vector2 position, Vector2 size, String text)
     {
@@ -28,9 +29,14 @@ public class UiButton {
         this.size = size;
         this.text = text;
         lock = false;
+        draw = true;
     }
 
     public void DrawButton() {
+
+        if(!draw)
+            return;
+
         // Draw button rectangle
         if(lock)
             DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, DARKGRAY);

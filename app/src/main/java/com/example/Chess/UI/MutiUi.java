@@ -12,6 +12,7 @@ public class MutiUi {
     public static UiButton[] buttons;
 
     public static ToolTip locaterServerToolTip = new ToolTip(new Vector2(640 + (360 / 2), 100), new Vector2(360 / 2, 100), "Loc Server\nAlready Started");
+    public static ToolTip serverToolTip = new ToolTip(new Vector2(640, 100), new Vector2(360 / 2, 100), "Needs Locater\nServer Connection");
 
     public static void Initialize()
     {
@@ -36,12 +37,33 @@ public class MutiUi {
             UpdateServerInfos();
         }
 
-        if(NetworkManager.isLocaterClient)
+        buttons[2].lock = NetworkManager.isLocaterClient;
+        buttons[1].lock = !NetworkManager.isLocaterClient || (NetworkManager.isClient && !NetworkManager.isServer);
+        if(buttons[2].lock)
         {
-            buttons[2].lock = true;
             locaterServerToolTip.show = true;
             locaterServerToolTip.Update();
         }
+        else
+        {
+            locaterServerToolTip.show = false;
+        }
+
+        if(buttons[1].lock)
+        {
+            if(NetworkManager.isClient)
+            {
+                serverToolTip.SetText("In a Server");
+            }
+            else
+            {
+                serverToolTip.SetText("Needs Locater\nServer Connection");
+            }
+            serverToolTip.show = true;
+            serverToolTip.Update();
+        }
+        else
+            serverToolTip.show = false;
 
         if(buttons[0].IsButtonClicked())
         {
@@ -54,16 +76,11 @@ public class MutiUi {
             {
                 NetworkManager.InitServer();
                 buttons[1].text = "Stop Server";
-
-                if(!NetworkManager.isLocaterClient)
-                {
-                    LocaterServer.ips[0] = NetworkManager.server.ip;
-                    LocaterServer.ports[0] = NetworkManager.server.port;
-                }
             }
             else
             {
                 NetworkManager.server.Stop();
+                NetworkManager.client.Stop();
                 buttons[1].text = "Start Server";
             }
         }
@@ -82,15 +99,23 @@ public class MutiUi {
                 }
             }
 
+            buttons[i + 3].lock = NetworkManager.isServer;
+
             if(buttons[i + 3].IsButtonClicked())
             {
                 if(!NetworkManager.isClient)
                 {
-                    NetworkManager.InitClient();
+                    String ip = NetworkManager.locaterServer.ips[i];
+                    int port = NetworkManager.locaterServer.ports[i];
+                    NetworkManager.InitClient(ip, port);
                     buttons[i + 3].text = "Leave";
                 }
                 else
                 {
+                    if(NetworkManager.isServer)
+                    {
+                        break;
+                    }
                     System.out.println("Disconnect");
                     NetworkManager.client.Disconnect();
                     buttons[i + 3].text = "Join";
@@ -130,6 +155,7 @@ public class MutiUi {
         }
 
         locaterServerToolTip.Draw();
+        serverToolTip.Draw();
     }
 
     public static void UpdateServerInfos()

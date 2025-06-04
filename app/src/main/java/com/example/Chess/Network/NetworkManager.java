@@ -3,6 +3,12 @@ package com.example.Chess.Network;
 import com.example.Chess.Network.Packets.IdentifierPacket;
 import com.raylib.Raylib;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+
 public class NetworkManager
 {
     public static final int globalPort = 58301;
@@ -36,22 +42,40 @@ public class NetworkManager
         //since it is localhost we just point all clients to the ip
         //the server runs on the port
         server = new Server();
-        
-        if(server.Init("127.0.0.1", globalPort))
+        String serverIp = "127.0.0.1";
+        Enumeration e = null;
+        try {
+            e = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException ex) {
+            throw new RuntimeException(ex);
+        }
+        while(e.hasMoreElements())
+        {
+            NetworkInterface n = (NetworkInterface) e.nextElement();
+            Enumeration ee = n.getInetAddresses();
+            while (ee.hasMoreElements())
+            {
+                InetAddress i = (InetAddress) ee.nextElement();
+                String ip = i.getHostAddress();
+                if((ip.charAt(0) == '1' && ip.charAt(1) == '9') || (ip.charAt(0) == '1' && ip.charAt(1) == '0'))
+                    serverIp = ip;
+            }
+        }
+        if(server.Init(serverIp, globalPort))
         {
             isServer = true;
             initialized = true;
 
             //we will also want to start a client to run along the server on the same instance
 
-            InitClient();
+            InitClient("127.0.0.1", server.port);
         }
     }
 
     /**
      * Starts the client
      */
-    public static void InitClient()
+    public static void InitClient(String ip, int port)
     {
         if(isClient)
             return;
@@ -61,7 +85,7 @@ public class NetworkManager
         client.Init();
         //the ip is just on localhost for testing but should be set
         //by and input to allow separate clients to connect
-        if(client.Connect("127.0.0.1", globalPort))
+        if(client.Connect(ip, port))
         {
             isClient = true;
             initialized = true;
