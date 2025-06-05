@@ -102,8 +102,6 @@ public class App
     {
         //Main update loop code
 
-        ChessSound.PlayNotify();
-
         NetworkManager.Update();
         UI.updateButtons();
         if(IsQuantumUiOpen){

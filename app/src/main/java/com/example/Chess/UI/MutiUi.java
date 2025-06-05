@@ -35,6 +35,10 @@ public class MutiUi {
         {
             updateAccum = 0;
             UpdateServerInfos();
+            if(!NetworkManager.isLocaterClient)
+            {
+                NetworkManager.InitLocaterClient();
+            }
         }
 
         buttons[2].lock = NetworkManager.isLocaterClient;
