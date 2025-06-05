@@ -122,21 +122,11 @@ public class NetworkManager
             isLocaterServer = true;
         }
     }
-
-    static float updateAccum = 1;
     /**
      * Will update server or client
      */
     public static void Update()
     {
-        updateAccum += Raylib.GetFrameTime();
-
-        if(!isLocaterClient && updateAccum > 1f)
-        {
-            updateAccum = 0;
-            InitLocaterClient();
-        }
-
         if(isServer)
         {
             server.Update();

@@ -1,5 +1,6 @@
 package com.example.Chess.UI;
 
+import com.example.Chess.Globals;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
 
@@ -66,6 +67,11 @@ public class ToolTip
 
         int mouseX = (int) Raylib.GetMousePosition().x();
         int mouseY = (int) Raylib.GetMousePosition().y();
+
+        if(mouseX + size.x > Globals.ChessWidth + Globals.UIWidth)
+        {
+            mouseX -= size.x;
+        }
 
         DrawRectangle((int) mouseX, (int) (mouseY - size.y), (int) size.x, (int) size.y, LIGHTGRAY);
 
