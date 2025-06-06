@@ -3,6 +3,7 @@ package com.example.Chess;
 import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Chess.ChessPiece;
 import com.example.Chess.Chess.ChessSound;
+import com.example.Chess.Chess.GameState;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PieceMovePacket;
 
@@ -16,34 +17,11 @@ import static com.raylib.Colors.*;
 
 public class Interaction {
     //By default, the mouse is not selecting a piece
-    private static int currentSelectedPiece = -1;
+    public static int currentSelectedPiece = -1;
     
     //Stores position when piece was selected
     private static Vector2 currentSelectedPosition;
     public static boolean disableInteraction;
-
-    //Track whose turn it is (true = black's turn; false = white's turn)
-    private static boolean isBlackTurn = false;
-    //if we are in a multiplayer game we need to lock our movement
-    public static boolean isOurTurn = false;
-
-    
-    //Checks if it is black's turn
-    public static boolean IsBlackTurn() {
-        return isBlackTurn;
-    }
-
-    public static void SetTurn(boolean isBlackTurn) {
-        Interaction.isBlackTurn = isBlackTurn;
-    }
-
-    public static void Init()
-    {
-        isBlackTurn = false;
-        isOurTurn = false;
-        if(!NetworkManager.isClient)
-            isOurTurn = true;
-    }
     
     public static void Update()
     {
@@ -63,37 +41,41 @@ public class Interaction {
 
         //Highlight the current mouse position
         HighlightSpot();
-        if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
-            CheckRightClick();
-            IsQuantumUiOpen = true;
-        }
-        if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
+        //if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
+        //    CheckRightClick();
+        //    IsQuantumUiOpen = true;
+        //}
 
-            //if we are connected to a server block movement if its not our turn
-            if(NetworkManager.isClient)
-            {
-                if(isOurTurn)
+        if(!disableInteraction)
+        {
+            if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
+
+                //if we are connected to a server block movement if its not our turn
+                if(NetworkManager.isClient)
+                {
+                    if(GameState.isOurTurn)
+                    {
+                        HandlePieceMove(mousePos);
+                    }
+                }
+                else
                 {
                     HandlePieceMove(mousePos);
                 }
             }
-            else
-            {
-                HandlePieceMove(mousePos);
-            }
-        }
 
-        //If we have a selected piece, show its possible moves and follow mouse
-        if (currentSelectedPiece != -1) {
-            ChessPiece piece = ChessBoard.chessPieces[currentSelectedPiece];
+            //If we have a selected piece, show its possible moves and follow mouse
+            if (currentSelectedPiece != -1) {
+                ChessPiece piece = ChessBoard.chessPieces[currentSelectedPiece];
 
-            //Draw possible moves
-            piece.position = currentSelectedPosition;
-            piece.DrawPossibleMoves();
+                //Draw possible moves
+                piece.position = currentSelectedPosition;
+                piece.DrawPossibleMoves();
 
-            //Make piece follow mouse (if within chessboard)
-            if (Raylib.GetMousePosition().x() < Globals.ChessWidth - 1) {
-                piece.position = mousePos;
+                //Make piece follow mouse (if within chessboard)
+                if (Raylib.GetMousePosition().x() < Globals.ChessWidth - 1) {
+                    piece.position = mousePos;
+                }
             }
         }
     }
@@ -104,27 +86,51 @@ public class Interaction {
             //First click - select piece
             ChessPiece piece = ChessBoard.GetChessPieceAtPos(mousePos);
 
+
             //Only allow selecting pieces of the current player's color
-            if (piece.id != -1 && piece.side == isBlackTurn) {
+            if (piece.id != -1 && piece.side == GameState.isBlackTurn) {
                 currentSelectedPosition = mousePos;
                 currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
             }
-        } else {
+        }
+        else
+        {
             //Second click - try to move the piece
             ChessPiece selectedPiece = ChessBoard.chessPieces[currentSelectedPiece];
 
             //Reset position temporarily for move validation
             selectedPiece.position = currentSelectedPosition;
+            Vector2 oldPos = selectedPiece.position;
 
-            if (selectedPiece.TryMove(mousePos)) {
+            if(ChessBoard.GetChessPieceAtPos(mousePos).GetPieceType() == 6)
+            {
+                currentSelectedPiece = -1;
+                return;
+            }
+
+            if (selectedPiece.TryMove(mousePos))
+            {
+                if(GameState.inCheck)
+                {
+                    GameState.inCheck = false;
+                    GameState.CheckKingStatus();
+                    if(GameState.inCheck)
+                    {
+                        //revert move as we are still in check
+                        selectedPiece.SetToPosition(oldPos);
+                        currentSelectedPiece = -1;
+                        return;
+                    }
+                }
+
                 //Valid move - switch turns
-                isBlackTurn = !isBlackTurn;
+                GameState.isBlackTurn = !GameState.isBlackTurn;
 
                 if (NetworkManager.isClient)
                 {
-                    PieceMovePacket packet = new PieceMovePacket(selectedPiece.position, currentSelectedPiece, isBlackTurn);
+                    PieceMovePacket packet = new PieceMovePacket(selectedPiece.position, currentSelectedPiece, GameState.isBlackTurn);
                     NetworkManager.client.SendPacket(packet);
-                    isOurTurn = false;
+                    GameState.isOurTurn = false;
                 }
             }
             ChessSound.PlayMove();
@@ -146,10 +152,11 @@ public class Interaction {
 
         //Highlight color (green for current player's turn, red for opponent's turn)
         Raylib.Color highColor = RED;
-        if(isOurTurn)
+        if(GameState.isOurTurn)
         {
-            if(ChessBoard.GetChessPieceAtPos(mousePos).side == isBlackTurn)
+            if(ChessBoard.GetChessPieceAtPos(mousePos).side == GameState.isBlackTurn)
                 highColor = GREEN;
+
         }
         highColor.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1)));
 

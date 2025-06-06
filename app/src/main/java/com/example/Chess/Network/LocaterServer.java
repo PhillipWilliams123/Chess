@@ -18,7 +18,7 @@ public class LocaterServer
     public List<Socket> clients;
     public static int locaterPort = 58300;
     //will need to be set to a known ip all clients have
-    public static String locaterIp = "127.0.0.1";
+    public static String locaterIp = "10.242.70.248";
     public ServerListenThread[] listenThreads;
     public Thread joinThread;
 
@@ -182,7 +182,7 @@ public class LocaterServer
             outStream.flush();
         } catch (IOException e)
         {
-            System.out.println("[LOC SERVER] Could not send packet");
+            System.out.println("[LOC SERVER] Could not send packet " + packet.GetType());
             return;
         }
     }
@@ -249,6 +249,14 @@ public class LocaterServer
 
         switch (type)
         {
+            case 0:
+            {
+                //ping packet
+                //behavior is to return a pong packet
+                PongPacket packet = new PongPacket();
+                SendPacket(packet, client);
+                break;
+            }
             case 4:
             {
                 //disconnect packet

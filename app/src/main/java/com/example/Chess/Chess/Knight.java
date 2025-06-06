@@ -66,4 +66,10 @@ public class Knight extends ChessPiece {
     public ChessPiece Copy() {
         return new Knight(new Vector2(position.x, position.y), side);
     }
+
+    @Override
+    public int GetPieceType()
+    {
+        return 2;
+    }
 }

@@ -188,4 +188,16 @@ public abstract class ChessPiece
     }
 
     public abstract ChessPiece Copy();
+
+    /**
+     * gets the type of chess piece that it is
+     * 1 - pawn
+     * 2 - knight
+     * 3 - bishop
+     * 4 - rook
+     * 5 - queen
+     * 6 - king
+     * @return the number that corresponds the type
+     */
+    public abstract int GetPieceType();
 }

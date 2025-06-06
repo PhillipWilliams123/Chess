@@ -71,4 +71,9 @@ public Queen(Vector2 position, boolean side) {
     public ChessPiece Copy() {
       return new Queen(this.position, this.side);
     }
+    @Override
+    public int GetPieceType()
+    {
+        return 5;
+    }
 }

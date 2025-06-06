@@ -60,4 +60,10 @@ public class Bishop extends ChessPiece {
     public ChessPiece Copy() {
         return new Bishop(this.position, this.side);
     }
+
+    @Override
+    public int GetPieceType()
+    {
+        return 3;
+    }
 }

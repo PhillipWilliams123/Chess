@@ -133,4 +133,10 @@ public class Rook extends ChessPiece {
     {
         return new Rook(this.position, this.side);
     }
+
+    @Override
+    public int GetPieceType()
+    {
+        return 4;
+    }
 }

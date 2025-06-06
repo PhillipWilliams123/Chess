@@ -103,4 +103,10 @@ public class Pawn extends ChessPiece
     public ChessPiece Copy() {
         return new Pawn(this.position, this.side);
     }
+
+    @Override
+    public int GetPieceType()
+    {
+        return 1;
+    }
 }

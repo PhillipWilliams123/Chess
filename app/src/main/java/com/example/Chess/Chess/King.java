@@ -57,4 +57,9 @@ public class King extends ChessPiece {
     public ChessPiece Copy() {
         return new King(this.position, this.side);
     }
+    @Override
+    public int GetPieceType()
+    {
+        return 6;
+    }
 }
