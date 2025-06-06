@@ -68,6 +68,7 @@ public class NetworkManager
 
             //we will also want to start a client to run along the server on the same instance
 
+            System.out.println(server.port);
             InitClient("127.0.0.1", server.port);
         }
     }

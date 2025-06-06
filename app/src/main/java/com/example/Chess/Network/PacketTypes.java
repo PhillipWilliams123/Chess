@@ -12,7 +12,8 @@ public enum PacketTypes
     serverInfo,
     serverInfoRequest,
     identifier,
-    startGame;
+    startGame,
+    state;
 
     public static PacketTypes[] types = PacketTypes.values();
 }

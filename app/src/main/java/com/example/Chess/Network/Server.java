@@ -1,6 +1,7 @@
 package com.example.Chess.Network;
 
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.GameState;
 import com.example.Chess.Interaction;
 import com.example.Chess.Network.Packets.*;
 
@@ -53,6 +54,8 @@ public class Server
                 break;
         }
 
+        this.port = port;
+
         if(!startedServer)
         {
             System.out.println("[SERVER] Could not start server " + err);
@@ -81,7 +84,7 @@ public class Server
             System.out.println("[SERVER] Started without connection to Locater Server");
         }
 
-        Interaction.Init();
+        GameState.Init();
         ChessBoard.Init();
 
         return true;
@@ -153,8 +156,8 @@ public class Server
                 joinThread.interrupt();
 
                 //if it is not our turn and someone joins then tell them it is their turn
-                if(!Interaction.isOurTurn && currentClients == 2)
-                    SendPacket(new StartGamePacket(Interaction.isOurTurn), currentClients);
+                if(!GameState.isOurTurn && currentClients == 2)
+                    SendPacket(new StartGamePacket(GameState.isOurTurn), currentClients);
             } catch (IOException e)
             {
                 System.out.println("[SERVER] Could not accept client");
@@ -186,7 +189,7 @@ public class Server
             outStream.flush();
         } catch (IOException e)
         {
-            System.out.println("[SERVER] Could not send packet");
+            System.out.println("[SERVER] Could not send packet " + packet.GetType());
             return;
         }
     }
@@ -312,6 +315,29 @@ public class Server
                     NetworkManager.locaterClient.SendPacket(new ServerInfoPacket(port, currentClients, 0, ip));
                 }
 
+                break;
+            }
+
+            case 5:
+            {
+                //draw packet
+
+                break;
+            }
+
+            case 6:
+            {
+                //surrender packet
+
+
+                break;
+            }
+            case 11:
+            {
+                StatePacket packet = new StatePacket();
+                packet.ByteToPacket(data);
+
+                SendPacketAllExclude(packet, client);
                 break;
             }
         }

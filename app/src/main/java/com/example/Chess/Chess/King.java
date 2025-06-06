@@ -181,4 +181,10 @@ public class King extends ChessPiece {
         copy.moveCount = this.moveCount;
         return copy;
     }
+
+    @Override
+    public int GetPieceType()
+    {
+        return 6;
+    }
 }

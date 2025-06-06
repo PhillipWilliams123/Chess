@@ -1,9 +1,11 @@
 package com.example.Chess.Network;
 
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.GameState;
 import com.example.Chess.Globals;
 import com.example.Chess.Interaction;
 import com.example.Chess.Network.Packets.*;
+import com.example.Chess.Rendering.Renderer;
 import com.example.Chess.UI.UiButton;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
@@ -63,6 +65,8 @@ public class Client implements Runnable
             this.ip = ip;
             this.port = port;
 
+            SendPacket(new PingPacket());
+
         } catch (IOException e)
         {
             System.out.println("[CLIENT] Could not connect to " + ip + ":" + port);
@@ -88,15 +92,40 @@ public class Client implements Runnable
             clientOutStream.flush();
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+            if(!NetworkManager.disablePacketLogging)
+                System.out.println("[CLIENT] could not send packet " + packet.GetType());
+            return;
         }
     }
 
+
+    static float pingAccum;
+    static float timeToRecieve;
+    static boolean recievedPong;
     /**
      * Will update the client
      */
     public void Update()
     {
+        pingAccum += Raylib.GetFrameTime();
+
+        if(!recievedPong)
+            timeToRecieve += Raylib.GetFrameTime();
+
+        if(pingAccum >= 5)
+        {
+            SendPacket(new PingPacket());
+            recievedPong = false;
+            pingAccum = 0;
+        }
+
+        if(timeToRecieve > 10)
+        {
+            //could not reach server after 5 seconds stop the client
+            Stop();
+            return;
+        }
+
         if(listenThread.isInterrupted())
         {
             //handle the data
@@ -173,6 +202,8 @@ public class Client implements Runnable
             {
                 //pong packet
                 //behavior is something
+                recievedPong = true;
+                timeToRecieve = 0;
                 break;
             }
             case 2:
@@ -199,8 +230,8 @@ public class Client implements Runnable
                 ChessBoard.chessPieces[packet.piece].TryMove(packet.position);
 
                 //we have received a move and can set our player to be able to move
-                Interaction.isOurTurn = true;
-                Interaction.SetTurn(packet.turn);
+                GameState.isOurTurn = true;
+                GameState.isBlackTurn = packet.turn;
 
                 break;
             }
@@ -250,12 +281,28 @@ public class Client implements Runnable
                 StartGamePacket packet = new StartGamePacket();
                 packet.ByteToPacket(data);
 
-                Interaction.Init();
-                Interaction.isOurTurn = !packet.otherSide;
+                GameState.Init();
+                GameState.isOurTurn = !packet.otherSide;
+                GameState.ourSide = !packet.otherSide;
 
                 //start game packet
                 ChessBoard.Init();
                 ChessBoard.InitStandardGame();
+                break;
+            }
+            case 11:
+            {
+                StatePacket packet = new StatePacket();
+                packet.ByteToPacket(data);
+
+                if(packet.win)
+                {
+                    //we have lost
+                    Interaction.disableInteraction = true;
+                    GameState.lost = true;
+                    Renderer.Draw2d = false;
+                }
+
                 break;
             }
         }
@@ -278,7 +325,7 @@ public class Client implements Runnable
             listenThread.interrupt();
             socket.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("[CLIENT] socket issue");
         }
     }
 }
