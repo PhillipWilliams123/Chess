@@ -4,9 +4,11 @@ package com.example.Chess.UI;
 
 
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.GameState;
 import com.example.Chess.Interaction;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.StartGamePacket;
+import com.example.Chess.Rendering.Renderer;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
 
@@ -59,15 +61,16 @@ public static boolean IsSoundenabled = true;
         {
             if(buttons[0].IsButtonClicked())
             {
-
+                GameState.Init();
                 ChessBoard.Init();
                 ChessBoard.InitStandardGame();
+                Renderer.Draw2d = true;
 
                 if(NetworkManager.isServer)
                 {
                     //tell the other client we are the one starting
                     NetworkManager.server.SendPacketAllExclude(new StartGamePacket(true), 0);
-                    Interaction.isOurTurn = true;
+                    GameState.isOurTurn = true;
                 }
 
             }

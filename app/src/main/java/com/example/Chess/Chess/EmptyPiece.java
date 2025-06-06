@@ -32,4 +32,10 @@ public class EmptyPiece extends ChessPiece
     {
         return new EmptyPiece();
     }
+
+    @Override
+    public int GetPieceType() {
+        return 0;
+    }
+
 }

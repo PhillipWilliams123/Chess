@@ -183,4 +183,10 @@ public class Pawn extends ChessPiece {
         copy.canBeEnPassantTarget = this.canBeEnPassantTarget;
         return copy;
     }
+
+    @Override
+    public int GetPieceType()
+    {
+        return 1;
+    }
 }

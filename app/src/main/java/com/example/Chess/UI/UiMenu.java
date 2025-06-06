@@ -1,6 +1,7 @@
 package com.example.Chess.UI;
 
 import com.example.Chess.Network.NetworkManager;
+import com.example.Chess.Network.Packets.SurrenderPacket;
 import com.example.Chess.Vector2;
 
 import static com.example.Chess.UI.UI.IsMenuOpen;
@@ -44,7 +45,7 @@ public class UiMenu {
 
         if(MenuButtons[3].IsButtonClicked())
         {
-
+            NetworkManager.client.SendPacket(new SurrenderPacket());
         }
         if(MenuButtons[4].IsButtonClicked())
         {

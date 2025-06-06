@@ -1,8 +1,10 @@
 package com.example.Chess.UI;
 
+import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Network.LocaterServer;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.ServerInfoRequestPacket;
+import com.example.Chess.Rendering.Renderer;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
 
@@ -85,6 +87,8 @@ public class MutiUi {
             {
                 NetworkManager.server.Stop();
                 NetworkManager.client.Stop();
+                ChessBoard.Init();
+                Renderer.Draw2d = true;
                 buttons[1].text = "Start Server";
             }
         }
@@ -101,6 +105,10 @@ public class MutiUi {
                 {
                     buttons[i + 3].text = "Leave";
                 }
+            }
+            else
+            {
+                buttons[i + 3].text = "join";
             }
 
             buttons[i + 3].lock = NetworkManager.isServer;
@@ -122,6 +130,8 @@ public class MutiUi {
                     }
                     System.out.println("Disconnect");
                     NetworkManager.client.Disconnect();
+                    ChessBoard.Init();
+                    Renderer.Draw2d = true;
                     buttons[i + 3].text = "Join";
                 }
             }

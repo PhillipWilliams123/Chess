@@ -1,9 +1,6 @@
 package com.example.Chess;
-import com.example.Chess.Chess.ChessBoard;
-import com.example.Chess.Chess.Rook;
+import com.example.Chess.Chess.*;
 import com.example.Chess.Network.NetworkManager;
-import com.example.Chess.Chess.Pawn;
-import com.example.Chess.Chess.Queen;
 import com.example.Chess.Chess.Rook;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PingPacket;
@@ -23,7 +20,6 @@ import static com.raylib.Raylib.*;
 import static com.raylib.Raylib.WindowShouldClose;
 
 import com.raylib.Raylib.Sound;
-import com.example.Chess.Chess.ChessSound;
 
 public class App
 {
@@ -85,7 +81,7 @@ public class App
         InitAudioDevice();
 
         //initialize any systems
-        Interaction.Init();
+        GameState.Init();
         ChessBoard.Init();
         ChessSound.Initialize();
         UiMenu.Initialize();
@@ -104,19 +100,17 @@ public class App
 
         NetworkManager.Update();
         UI.updateButtons();
-        if(IsQuantumUiOpen){
-            QuantumUiButton.updateButtons();
-        }
+        //if(IsQuantumUiOpen){
+        //    QuantumUiButton.updateButtons();
+        //}
+
+        if(Interaction.currentSelectedPiece == -1)
+            GameState.CheckKingStatus();
     }
 
     public static void Render()
     {
         //any drawing commands should be put in here or rendering code
-
-        if(Raylib.GetKeyPressed() == KEY_F)
-        {
-            mainRenderer.Draw2d = false;
-        }
 
         if(!mainRenderer.Draw2d)
             mainRenderer.Draw3DChessBoard();

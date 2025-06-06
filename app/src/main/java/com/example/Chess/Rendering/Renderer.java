@@ -2,6 +2,7 @@ package com.example.Chess.Rendering;
 
 import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Chess.ChessPiece;
+import com.example.Chess.Chess.GameState;
 import com.example.Chess.Globals;
 import com.raylib.Raylib;
 import com.example.Chess.UI.UI;
@@ -16,7 +17,7 @@ public class Renderer
 {
 
 
-    public boolean Draw2d;
+    public static boolean Draw2d;
     public Raylib.Camera3D camera;
 
     /**
@@ -73,7 +74,10 @@ public class Renderer
             radius = ChessBoard.boardSize;
 
         //if win or lose can set the background color
-        Raylib.ClearBackground(GREEN);
+        if(!GameState.lost)
+            Raylib.ClearBackground(GREEN);
+        else
+            Raylib.ClearBackground(RED);
 
         camera = new Camera3D()
                 ._position((new Vector3().x((float) (Math.cos(GetTime()) * radius)).y((float) (radius + 0.5)).z((float) radius)))
