@@ -15,21 +15,21 @@ import com.raylib.Raylib;
 import static com.raylib.Colors.*;
 
 public class Interaction {
+
     //By default, the mouse is not selecting a piece
     private static int currentSelectedPiece = -1;
-    
+
     //Stores position when piece was selected
     private static Vector2 currentSelectedPosition;
     public static boolean disableInteraction;
 
     //Track whose turn it is (true = black's turn; false = white's turn)
-    private static boolean isBlackTurn = false;
+    public static boolean isBlackTurn = true;
     //if we are in a multiplayer game we need to lock our movement
     public static boolean isOurTurn = false;
 
-    
     //Checks if it is black's turn
-    public static boolean IsBlackTurn() {
+    public static boolean isBlackTurn() {
         return isBlackTurn;
     }
 
@@ -37,48 +37,42 @@ public class Interaction {
         Interaction.isBlackTurn = isBlackTurn;
     }
 
-    public static void Init()
-    {
+    public static void Init() {
         isBlackTurn = false;
         isOurTurn = false;
-        if(!NetworkManager.isClient)
+        if (!NetworkManager.isClient) {
             isOurTurn = true;
+        }
     }
-    
-    public static void Update()
-    {
+
+    public static void Update() {
 
         //Convert mouse position to the board position
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
-        
+
         //Scalar multiplcation
         mousePos = Vector2.Mul(Vector2.Div(mousePos, new Vector2(Globals.ChessWidth, Globals.ScreenHeight)), ChessBoard.boardSize);
         mousePos = Vector2.Floor(mousePos);
 
-        if(ChessBoard.GetPieceIdAtPos(mousePos) != -1)
-        {
+        if (ChessBoard.GetPieceIdAtPos(mousePos) != -1) {
             //Highlight the current mouse position
             HighlightSpot();
         }
 
         //Highlight the current mouse position
         HighlightSpot();
-        if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
+        if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece() == true) {
             CheckRightClick();
             IsQuantumUiOpen = true;
         }
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
 
             //if we are connected to a server block movement if its not our turn
-            if(NetworkManager.isClient)
-            {
-                if(isOurTurn)
-                {
+            if (NetworkManager.isClient) {
+                if (isOurTurn) {
                     HandlePieceMove(mousePos);
                 }
-            }
-            else
-            {
+            } else {
                 HandlePieceMove(mousePos);
             }
         }
@@ -98,14 +92,13 @@ public class Interaction {
         }
     }
 
-    private static void HandlePieceMove(Vector2 mousePos)
-    {
+    private static void HandlePieceMove(Vector2 mousePos) {
         if (currentSelectedPiece == -1) {
             //First click - select piece
             ChessPiece piece = ChessBoard.GetChessPieceAtPos(mousePos);
 
             //Only allow selecting pieces of the current player's color
-            if (piece.id != -1 && piece.side == isBlackTurn) {
+            if (piece.id != -1 && piece.side != isBlackTurn) {
                 currentSelectedPosition = mousePos;
                 currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
             }
@@ -120,8 +113,7 @@ public class Interaction {
                 //Valid move - switch turns
                 isBlackTurn = !isBlackTurn;
 
-                if (NetworkManager.isClient)
-                {
+                if (NetworkManager.isClient) {
                     PieceMovePacket packet = new PieceMovePacket(selectedPiece.position, currentSelectedPiece, isBlackTurn);
                     NetworkManager.client.SendPacket(packet);
                     isOurTurn = false;
@@ -146,17 +138,17 @@ public class Interaction {
 
         //Highlight color (green for current player's turn, red for opponent's turn)
         Raylib.Color highColor = RED;
-        if(isOurTurn)
-        {
-            if(ChessBoard.GetChessPieceAtPos(mousePos).side == isBlackTurn)
+        if (isOurTurn) {
+            if (ChessBoard.GetChessPieceAtPos(mousePos).side == isBlackTurn) {
                 highColor = GREEN;
+            }
         }
         highColor.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1)));
 
         double xScale = Globals.ChessWidth / (double) ChessBoard.boardSize;
         double yScale = Globals.ScreenHeight / (double) ChessBoard.boardSize;
         mousePos = Vector2.Floor(mousePos);
-        
+
         Raylib.DrawRectangle((int) (mousePos.x * xScale), (int) (mousePos.y * yScale), (int) xScale, (int) yScale, highColor);
     }
 }
