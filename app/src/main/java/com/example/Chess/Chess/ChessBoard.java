@@ -46,8 +46,8 @@ public class ChessBoard
         AddPiece(new Rook(new Vector2(0,0), true));
         AddPiece(new Knight(new Vector2(1,0), true));
         AddPiece(new Bishop(new Vector2(2,0), true));
-        AddPiece(new King(new Vector2(3,0), true));
-        AddPiece(new Queen(new Vector2(4,0), true));
+        AddPiece(new King(new Vector2(4,0), true));
+        AddPiece(new Queen(new Vector2(3,0), true));
         AddPiece(new Bishop(new Vector2(5,0), true));
         AddPiece(new Knight(new Vector2(6,0), true));
         AddPiece(new Rook(new Vector2(7,0), true));

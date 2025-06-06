@@ -6,7 +6,7 @@ import com.example.Chess.Chess.ChessSound;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PieceMovePacket;
 
-import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
+//import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
 import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
 
 import com.example.Chess.UI.QuantumUiButton;
@@ -16,14 +16,14 @@ import static com.raylib.Colors.*;
 
 public class Interaction {
     //By default, the mouse is not selecting a piece
-    private static int currentSelectedPiece = -1;
+    public static int currentSelectedPiece = -1;
     
     //Stores position when piece was selected
     private static Vector2 currentSelectedPosition;
     public static boolean disableInteraction;
 
     //Track whose turn it is (true = black's turn; false = white's turn)
-    private static boolean isBlackTurn = true;
+    public static boolean isBlackTurn = true;
 
     
     //Checks if it is black's turn
@@ -45,11 +45,12 @@ public class Interaction {
 
         //Highlight the current mouse position
         HighlightSpot();
-        if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT) && QuantumUiButton.IsMouseOverPiece()==true){
-            CheckRightClick();
+        if(Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT)){
+//            CheckRightClick();
             IsQuantumUiOpen = true;
         }
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
+
             if (currentSelectedPiece == -1) {
                 //First click - select piece
                 ChessPiece piece = ChessBoard.GetChessPieceAtPos(mousePos);
@@ -59,6 +60,7 @@ public class Interaction {
                     currentSelectedPosition = mousePos;
                     currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
                 }
+
             }
             else {
                 //Second click - try to move the piece
@@ -66,11 +68,12 @@ public class Interaction {
                 
                 //Reset position temporarily for move validation
                 selectedPiece.position = currentSelectedPosition;
-                
+
+
                 if (selectedPiece.TryMove(mousePos)) {
                     //Valid move - switch turns
                     isBlackTurn = !isBlackTurn;
-                    
+
                     if (NetworkManager.initialized && NetworkManager.isClient) {
                         PieceMovePacket packet = new PieceMovePacket(selectedPiece.position, currentSelectedPiece);
                         NetworkManager.client.SendPacket(packet);
@@ -97,7 +100,7 @@ public class Interaction {
         }
     }
 
-    private static void HighlightSpot() {
+    public static void HighlightSpot() {
         //Draw a square to show what position is highlighted
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
 

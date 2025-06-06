@@ -15,9 +15,8 @@ public class UiMenu {
         MenuButtons = new UiButton[6];
         MenuButtons[0] = new UiButton(new Vector2(640, 0), new Vector2(360, 100), "Back");
         MenuButtons[1] = new UiButton(new Vector2(640, 100), new Vector2(360, 100), "Disable Sound");
-        MenuButtons[2] = new UiButton(new Vector2(640, 200), new Vector2(360, 100), "Option");
-        MenuButtons[3] = new UiButton(new Vector2(640, 300), new Vector2(180, 100), "Surrender");
-        MenuButtons[4] = new UiButton(new Vector2(820, 300), new Vector2(180, 100), "Offer Draw");
+        MenuButtons[2] = new UiButton(new Vector2(640, 200), new Vector2(180, 100), "Surrender");
+        MenuButtons[3] = new UiButton(new Vector2(820, 200), new Vector2(180, 100), "Offer Draw");
 
 
 
@@ -31,22 +30,11 @@ public class UiMenu {
         if(MenuButtons[1].CheckStartButtonClicked())
         {
             CheckIsSoundenabled();
-
         }
-        if(MenuButtons[2].CheckStartButtonClicked())
-        {
-
-        }
-
         if(MenuButtons[3].CheckStartButtonClicked())
         {
 
         }
-        if(MenuButtons[4].CheckStartButtonClicked())
-        {
-
-        }
-
 
     }
     public static void RenderButtons()

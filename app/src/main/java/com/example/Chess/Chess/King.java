@@ -17,13 +17,13 @@ public class King extends ChessPiece {
 
     @Override
     public boolean TryMove(Vector2 pos) {
-        if (CheckMove(pos) == false) {
+        if (!CheckMove(pos)) {
             return false;
         }
         
         // Check if the move would capture a piece
         if (ChessBoard.GetPieceIdAtPos(pos) != -1) {
-            if (TryTakePiece(pos) == false) {
+            if (!TryTakePiece(pos)) {
                 return false;
             }
         }
@@ -43,9 +43,7 @@ public class King extends ChessPiece {
             // Check if target position is empty or contains opponent's piece
             int targetId = ChessBoard.GetPieceIdAtPos(pos);
             //If the square is empty or that there is an opponent occupying that space
-            if (targetId == -1 || ChessBoard.chessPieces[targetId].side != this.side) {
-                return true;
-            }
+            return targetId == -1 || ChessBoard.chessPieces[targetId].side != this.side;
         }
         
         //TODO: Add castling logic here
