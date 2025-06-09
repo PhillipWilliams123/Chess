@@ -3,7 +3,6 @@ package com.example.Chess.UI;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
 
-import static com.example.Chess.Chess.ChessSound.*;
 import static com.example.Chess.Chess.ChessSound.CaptureSound;
 import static com.example.Chess.Chess.ChessSound.MoveSound;
 import static com.example.Chess.Chess.ChessSound.NotifySound;
@@ -18,22 +17,37 @@ public class UiButton {
     public Vector2 position;
     public Vector2 size;
     public String text;
+    /**
+     * Will lock the button from being clicked
+     */
+    public boolean lock;
+    public boolean draw;
 
     public UiButton(Vector2 position, Vector2 size, String text)
     {
         this.position = position;
         this.size = size;
         this.text = text;
+        lock = false;
+        draw = true;
     }
 
     public void DrawButton() {
+
+        if(!draw)
+            return;
+
         // Draw button rectangle
-        DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, LIGHTGRAY);
+        if(lock)
+            DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, DARKGRAY);
+        else
+            DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, LIGHTGRAY);
         int mouseX = (int) Raylib.GetMousePosition().x();
         int mouseY = (int) Raylib.GetMousePosition().y();
             if (mouseX >= position.x && mouseX <= position.x + size.x && mouseY >= position.y && mouseY <= position.y + size.y) {
 
-                DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, DARKGRAY);
+                if(!lock)
+                    DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, GRAY);
             }
         // Draw button border
         DrawRectangleLines((int) position.x, (int) position.y, (int) size.x, (int) size.y, BLACK);
@@ -44,9 +58,7 @@ public class UiButton {
         int textY = (int)position.y + ((int)size.y - 20) / 2;
         DrawText(text, textX, textY, 20, BLACK);
     }
-    public static void DrawOption() {
-        DrawRectangle(640, 0, 1000, 640, LIGHTGRAY);
-    }
+
     public static void CheckIsSoundenabled() {
         if(IsMenuOpen) {
             if (IsSoundenabled) {
@@ -64,7 +76,12 @@ public class UiButton {
             }
         }
     }
-    public boolean CheckStartButtonClicked() {
+
+    public boolean IsButtonClicked()
+    {
+        if(lock)
+            return false;
+
         int mouseX = (int) Raylib.GetMousePosition().x();
         int mouseY = (int) Raylib.GetMousePosition().y();
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {

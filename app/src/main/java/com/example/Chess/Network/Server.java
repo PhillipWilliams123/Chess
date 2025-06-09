@@ -1,5 +1,8 @@
 package com.example.Chess.Network;
 
+import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.GameState;
+import com.example.Chess.Interaction;
 import com.example.Chess.Network.Packets.*;
 
 import java.io.*;
@@ -18,7 +21,7 @@ public class Server
     public ServerListenThread[] listenThreads;
     public Thread joinThread;
 
-    private int currentClients;
+    public int currentClients;
 
     /**
      * Starts the server on a port
@@ -51,6 +54,8 @@ public class Server
                 break;
         }
 
+        this.port = port;
+
         if(!startedServer)
         {
             System.out.println("[SERVER] Could not start server " + err);
@@ -79,6 +84,9 @@ public class Server
             System.out.println("[SERVER] Started without connection to Locater Server");
         }
 
+        GameState.Init();
+        ChessBoard.Init();
+
         return true;
     }
 
@@ -97,7 +105,7 @@ public class Server
                 try
                 {
                     //dont reset the thread if the client is null
-                    if(clients.isEmpty() || clients.get(i) == null)
+                    if(i == clients.size() || clients.get(i) == null)
                         continue;
 
                     //reset the thread
@@ -144,7 +152,12 @@ public class Server
                     NetworkManager.locaterClient.SendPacket(new IdentifierPacket(true));
                     NetworkManager.locaterClient.SendPacket(new ServerInfoPacket(port, currentClients, 0, ip));
                 }
+
                 joinThread.interrupt();
+
+                //if it is not our turn and someone joins then tell them it is their turn
+                if(!GameState.isOurTurn && currentClients == 2)
+                    SendPacket(new StartGamePacket(GameState.isOurTurn), currentClients);
             } catch (IOException e)
             {
                 System.out.println("[SERVER] Could not accept client");
@@ -176,7 +189,7 @@ public class Server
             outStream.flush();
         } catch (IOException e)
         {
-            System.out.println("[SERVER] Could not send packet");
+            System.out.println("[SERVER] Could not send packet " + packet.GetType());
             return;
         }
     }
@@ -304,6 +317,29 @@ public class Server
 
                 break;
             }
+
+            case 5:
+            {
+                //draw packet
+
+                break;
+            }
+
+            case 6:
+            {
+                //surrender packet
+
+
+                break;
+            }
+            case 11:
+            {
+                StatePacket packet = new StatePacket();
+                packet.ByteToPacket(data);
+
+                SendPacketAllExclude(packet, client);
+                break;
+            }
         }
     }
 
@@ -312,6 +348,10 @@ public class Server
      */
     public void Stop()
     {
+        if(NetworkManager.isLocaterClient)
+        {
+            NetworkManager.locaterClient.SendPacket(new ServerInfoPacket(0, 0, 0, ""));
+        }
         NetworkManager.isServer = false;
 
         try {

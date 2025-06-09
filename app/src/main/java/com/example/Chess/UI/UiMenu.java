@@ -1,10 +1,10 @@
 package com.example.Chess.UI;
 
-import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Network.NetworkManager;
+import com.example.Chess.Network.Packets.SurrenderPacket;
 import com.example.Chess.Vector2;
-import com.raylib.Raylib;
+
 import static com.example.Chess.UI.UI.IsMenuOpen;
-import static com.example.Chess.UI.UI.IsMutiMenuOpen;
 import static com.example.Chess.UI.UiButton.CheckIsSoundenabled;
 
 public class UiMenu {
@@ -22,16 +22,30 @@ public class UiMenu {
 
     }
     public static void updateButtons(){
-        if(MenuButtons[0].CheckStartButtonClicked())
+        if(MenuButtons[0].IsButtonClicked())
         {
             IsMenuOpen = false;
 
         }
-        if(MenuButtons[1].CheckStartButtonClicked())
+        if(MenuButtons[1].IsButtonClicked())
         {
             CheckIsSoundenabled();
         }
-        if(MenuButtons[3].CheckStartButtonClicked())
+        if(MenuButtons[2].IsButtonClicked())
+        {
+
+        }
+
+        MenuButtons[3].lock = !NetworkManager.isClient;
+        MenuButtons[4].lock = !NetworkManager.isClient;
+        MenuButtons[3].draw = NetworkManager.isClient;
+        MenuButtons[4].draw = NetworkManager.isClient;
+
+        if(MenuButtons[3].IsButtonClicked())
+        {
+            NetworkManager.client.SendPacket(new SurrenderPacket());
+        }
+        if(MenuButtons[4].IsButtonClicked())
         {
 
         }

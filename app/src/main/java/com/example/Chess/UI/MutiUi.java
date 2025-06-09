@@ -4,13 +4,17 @@ import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Network.LocaterServer;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.ServerInfoRequestPacket;
+import com.example.Chess.Rendering.Renderer;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
-import static com.example.Chess.UI.UiButton.CheckIsSoundenabled;
+
 import static com.raylib.Colors.*;
 
 public class MutiUi {
     public static UiButton[] buttons;
+
+    public static ToolTip locaterServerToolTip = new ToolTip(new Vector2(640 + (360 / 2), 100), new Vector2(360 / 2, 100), "Loc Server\nAlready Started");
+    public static ToolTip serverToolTip = new ToolTip(new Vector2(640, 100), new Vector2(360 / 2, 100), "Needs Locater\nServer Connection");
 
     public static void Initialize()
     {
@@ -33,33 +37,62 @@ public class MutiUi {
         {
             updateAccum = 0;
             UpdateServerInfos();
+            if(!NetworkManager.isLocaterClient)
+            {
+                NetworkManager.InitLocaterClient();
+            }
         }
 
-        if(buttons[0].CheckStartButtonClicked())
+        buttons[2].lock = NetworkManager.isLocaterClient;
+        buttons[1].lock = !NetworkManager.isLocaterClient || (NetworkManager.isClient && !NetworkManager.isServer);
+        if(buttons[2].lock)
+        {
+            locaterServerToolTip.show = true;
+            locaterServerToolTip.Update();
+        }
+        else
+        {
+            locaterServerToolTip.show = false;
+        }
+
+        if(buttons[1].lock)
+        {
+            if(NetworkManager.isClient)
+            {
+                serverToolTip.SetText("In a Server");
+            }
+            else
+            {
+                serverToolTip.SetText("Needs Locater\nServer Connection");
+            }
+            serverToolTip.show = true;
+            serverToolTip.Update();
+        }
+        else
+            serverToolTip.show = false;
+
+        if(buttons[0].IsButtonClicked())
         {
             UI.IsMutiMenuOpen = false;
 
         }
-        if(buttons[1].CheckStartButtonClicked())
+        if(buttons[1].IsButtonClicked())
         {
             if(!NetworkManager.isServer && !NetworkManager.isClient)
             {
                 NetworkManager.InitServer();
                 buttons[1].text = "Stop Server";
-
-                if(!NetworkManager.isLocaterClient)
-                {
-                    LocaterServer.ips[0] = NetworkManager.server.ip;
-                    LocaterServer.ports[0] = NetworkManager.server.port;
-                }
             }
             else
             {
                 NetworkManager.server.Stop();
+                NetworkManager.client.Stop();
+                ChessBoard.Init();
+                Renderer.Draw2d = true;
                 buttons[1].text = "Start Server";
             }
         }
-        if(buttons[2].CheckStartButtonClicked())
+        if(buttons[2].IsButtonClicked())
         {
             NetworkManager.InitLocaterServer();
         }
@@ -73,18 +106,32 @@ public class MutiUi {
                     buttons[i + 3].text = "Leave";
                 }
             }
+            else
+            {
+                buttons[i + 3].text = "join";
+            }
 
-            if(buttons[i + 3].CheckStartButtonClicked())
+            buttons[i + 3].lock = NetworkManager.isServer;
+
+            if(buttons[i + 3].IsButtonClicked())
             {
                 if(!NetworkManager.isClient)
                 {
-                    NetworkManager.InitClient();
+                    String ip = NetworkManager.locaterServer.ips[i];
+                    int port = NetworkManager.locaterServer.ports[i];
+                    NetworkManager.InitClient(ip, port);
                     buttons[i + 3].text = "Leave";
                 }
                 else
                 {
+                    if(NetworkManager.isServer)
+                    {
+                        break;
+                    }
                     System.out.println("Disconnect");
                     NetworkManager.client.Disconnect();
+                    ChessBoard.Init();
+                    Renderer.Draw2d = true;
                     buttons[i + 3].text = "Join";
                 }
             }
@@ -120,6 +167,9 @@ public class MutiUi {
 
             Raylib.DrawText(LocaterServer.ips[i] + " Players: " + LocaterServer.players[i], 640, 20 * i + 200, 20, BLACK);
         }
+
+        locaterServerToolTip.Draw();
+        serverToolTip.Draw();
     }
 
     public static void UpdateServerInfos()

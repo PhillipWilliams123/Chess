@@ -10,16 +10,18 @@ public class PieceMovePacket extends Packet
 {
     public Vector2 position;
     public int piece;
+    public boolean turn;
 
     public PieceMovePacket()
     {
 
     }
 
-    public PieceMovePacket(Vector2 position, int piece)
+    public PieceMovePacket(Vector2 position, int piece, boolean turn)
     {
         this.position = position;
         this.piece = piece;
+        this.turn = turn;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class PieceMovePacket extends Packet
             outStream.writeDouble(position.x);
             outStream.writeDouble(position.y);
             outStream.writeInt(piece);
+            outStream.writeBoolean(turn);
             outStream.flush();
             outStream.close();
         } catch (IOException e)
@@ -59,6 +62,7 @@ public class PieceMovePacket extends Packet
                 throw new RuntimeException("Byte data does not match packet" + type + " " + GetType());
             position = new Vector2(inputStream.readDouble(), inputStream.readDouble());
             piece = inputStream.readInt();
+            turn = inputStream.readBoolean();
             inputStream.close();
         } catch (IOException e)
         {
