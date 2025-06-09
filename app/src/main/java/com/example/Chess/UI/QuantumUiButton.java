@@ -1,9 +1,12 @@
 package com.example.Chess.UI;
 
 import com.example.Chess.Chess.ChessBoard;
+import com.example.Chess.Chess.ChessPiece;
 import com.raylib.Raylib;
 
 import com.example.Chess.Vector2;
+import com.example.Chess.Quantum.Moveset;
+
 import static com.example.Chess.Chess.ChessBoard.GetChessPieceAtPos;
 import static com.raylib.Colors.LIGHTGRAY;
 import static com.raylib.Raylib.DrawRectangle;
@@ -57,22 +60,6 @@ public static int CheckOutofBound (int num){
         }
         return num;
 }
-    public static void FindButtonslocation() {
-        int mouseX = (int) Raylib.GetMousePosition().x();
-        int mouseY = (int) Raylib.GetMousePosition().y();
-        Quantumbuttons[0] = new UiButton(new Vector2(mouseX, CheckOutofBound(mouseY) + 50), new Vector2(200, 100), "Quantum Action");
-        Quantumbuttons[1] = new UiButton(new Vector2(mouseX, CheckOutofBound(mouseY)), new Vector2(200, 50), "Quit");
-    }
-
-    public static void RenderButtons() {
-        if (IsQuantumUiOpen) {
-            for (UiButton button : Quantumbuttons) {
-                if (button != null) {
-                    button.DrawButton();
-                }
-            }
-        }
-    }
 }
 
 

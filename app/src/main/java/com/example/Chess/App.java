@@ -118,9 +118,10 @@ public class App
         mainRenderer.DrawPieces();
         Interaction.Update();
         UI.RenderButtons();
-        if(IsQuantumUiOpen){
-            QuantumUiButton.RenderButtons();
-        }
+//        if(IsQuantumUiOpen){
+//            QuantumUiButton.RenderButtons();
+//
+//        }
 
 
 

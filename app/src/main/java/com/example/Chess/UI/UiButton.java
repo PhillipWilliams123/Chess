@@ -6,8 +6,8 @@ import com.raylib.Raylib;
 import static com.example.Chess.Chess.ChessSound.CaptureSound;
 import static com.example.Chess.Chess.ChessSound.MoveSound;
 import static com.example.Chess.Chess.ChessSound.NotifySound;
-import static com.example.Chess.UI.UI.IsSoundenabled;
-import static com.example.Chess.UI.UI.buttons;
+import static com.example.Chess.UI.UI.*;
+import static com.example.Chess.UI.UiMenu.MenuButtons;
 import static com.raylib.Colors.*;
 import static com.raylib.Raylib.*;
 import static com.raylib.Raylib.DrawText;
@@ -60,18 +60,20 @@ public class UiButton {
     }
 
     public static void CheckIsSoundenabled() {
-        if (IsSoundenabled) {
-            SetSoundVolume(CaptureSound, 0);
-            SetSoundVolume(MoveSound, 0);
-            SetSoundVolume(NotifySound, 0);
-            buttons[1] = new UiButton(new Vector2(640, 100), new Vector2(360, 100), "Enable Sound");
-            IsSoundenabled = false;
-        } else {
-            SetSoundVolume(CaptureSound, 100);
-            SetSoundVolume(MoveSound, 100);
-            SetSoundVolume(NotifySound, 100);
-            buttons[1] = new UiButton(new Vector2(640, 100), new Vector2(360, 100), "Disable Sound");
-            IsSoundenabled = true;
+        if(IsMenuOpen) {
+            if (IsSoundenabled) {
+                SetSoundVolume(CaptureSound, 0);
+                SetSoundVolume(MoveSound, 0);
+                SetSoundVolume(NotifySound, 0);
+                MenuButtons[1] = new UiButton(new Vector2(640, 100), new Vector2(360, 100), "Enable Sound");
+                IsSoundenabled = false;
+            } else {
+                SetSoundVolume(CaptureSound, 100);
+                SetSoundVolume(MoveSound, 100);
+                SetSoundVolume(NotifySound, 100);
+                MenuButtons[1] = new UiButton(new Vector2(640, 100), new Vector2(360, 100), "Disable Sound");
+                IsSoundenabled = true;
+            }
         }
     }
 
