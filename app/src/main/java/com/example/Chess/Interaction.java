@@ -15,10 +15,11 @@ import com.raylib.Raylib;
 
 import static com.raylib.Colors.*;
 
-public class Interaction {
+public class Interaction
+{
 
     //By default, the mouse is not selecting a piece
-    private static int currentSelectedPiece = -1;
+    public static int currentSelectedPiece = -1;
 
     //Stores position when piece was selected
     private static Vector2 currentSelectedPosition;
@@ -28,23 +29,6 @@ public class Interaction {
     public static boolean isBlackTurn = true;
     //if we are in a multiplayer game we need to lock our movement
     public static boolean isOurTurn = false;
-
-    //Checks if it is black's turn
-    public static boolean isBlackTurn() {
-        return isBlackTurn;
-    }
-
-    public static void SetTurn(boolean isBlackTurn) {
-        Interaction.isBlackTurn = isBlackTurn;
-    }
-
-    public static void Init() {
-        isBlackTurn = false;
-        isOurTurn = false;
-        if (!NetworkManager.isClient) {
-            isOurTurn = true;
-        }
-    }
 
     public static void Update() {
 
@@ -100,7 +84,7 @@ public class Interaction {
                 }
             }
         }
-    }
+
 
     private static void HandlePieceMove(Vector2 mousePos) {
         if (currentSelectedPiece == -1) {
