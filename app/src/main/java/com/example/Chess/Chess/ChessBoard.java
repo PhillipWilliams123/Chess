@@ -1,9 +1,8 @@
 package com.example.Chess.Chess;
 
 import com.example.Chess.Globals;
-import static com.example.Chess.Interaction.isBlackTurn;
 import com.example.Chess.Vector2;
-
+import static com.example.Chess.Interaction.isBlackTurn;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -29,7 +28,7 @@ public class ChessBoard {
      * Initializes the chess board
      */
     public static void Init() {
-        isBlackTurn = true;
+        isBlackTurn = false;
         chessPieces = new ChessPiece[boardSize * boardSize];
         chessPieceIds = new int[boardSize * boardSize];
         freeChessPieceIds = new LinkedList<>();
@@ -43,39 +42,33 @@ public class ChessBoard {
     }
 
     public static void InitStandardGame() {
-        // Initialize the board
-        Init();
+        //top row
+        AddPiece(new Rook(new Vector2(0, 0), true));
+        AddPiece(new Knight(new Vector2(1, 0), true));
+        AddPiece(new Bishop(new Vector2(2, 0), true));
+        AddPiece(new Queen(new Vector2(3, 0), true));
+        AddPiece(new King(new Vector2(4, 0), true));
+        AddPiece(new Bishop(new Vector2(5, 0), true));
+        AddPiece(new Knight(new Vector2(6, 0), true));
+        AddPiece(new Rook(new Vector2(7, 0), true));
 
-        // White pieces (indices 0-15)
-        addPieceWithIndex(new Rook(new Vector2(0, 0), true), true,0);
-        addPieceWithIndex(new Knight(new Vector2(1, 0), true), true, 1);
-        addPieceWithIndex(new Bishop(new Vector2(2, 0), true), true, 2);
-        addPieceWithIndex(new Queen(new Vector2(3, 0), true), true, 3);
-        addPieceWithIndex(new King(new Vector2(4, 0), true), true, 4);
-        addPieceWithIndex(new Bishop(new Vector2(5, 0), true), true, 5);
-        addPieceWithIndex(new Knight(new Vector2(6, 0), true), true, 6);
-        addPieceWithIndex(new Rook(new Vector2(7, 0), true), true, 7);
         for (int i = 0; i < 8; i++) {
-            addPieceWithIndex(new Pawn(new Vector2(i, 1), true), true, 8 + i);
+            AddPiece(new Pawn(new Vector2(i, 1), true));
         }
 
-        // Black pieces (indices 0-15)
-        addPieceWithIndex(new Rook(new Vector2(0, 7), false), false, 0);
-        addPieceWithIndex(new Knight(new Vector2(1, 7), false), false, 1);
-        addPieceWithIndex(new Bishop(new Vector2(2, 7), false), false, 2);
-        addPieceWithIndex(new Queen(new Vector2(3, 7), false), false, 3);
-        addPieceWithIndex(new King(new Vector2(4, 7), false), false, 4);
-        addPieceWithIndex(new Bishop(new Vector2(5, 7), false), false, 5);
-        addPieceWithIndex(new Knight(new Vector2(6, 7), false), false, 6);
-        addPieceWithIndex(new Rook(new Vector2(7, 7), false), false, 7);
-        for (int i = 0; i < 8; i++) {
-            addPieceWithIndex(new Pawn(new Vector2(i, 6), false), false, 8 + i);
-        }
-    }
+        //Bottom row
+        AddPiece(new Rook(new Vector2(0, 7), false));
+        AddPiece(new Knight(new Vector2(1, 7), false));
+        AddPiece(new Bishop(new Vector2(2, 7), false));
+        AddPiece(new Queen(new Vector2(3, 7), false));
+        AddPiece(new King(new Vector2(4, 7), false));
+        AddPiece(new Bishop(new Vector2(5, 7), false));
+        AddPiece(new Knight(new Vector2(6, 7), false));
+        AddPiece(new Rook(new Vector2(7, 7), false));
 
-    private static void addPieceWithIndex(ChessPiece piece, boolean isWhite, int index) {
-        piece.pieceIndex = index;
-        AddPiece(piece);
+        for (int i = 0; i < 8; i++) {
+            AddPiece(new Pawn(new Vector2(i, 6), false));
+        }
     }
 
     /**
@@ -154,6 +147,7 @@ public class ChessBoard {
     /**
      * Scales a position into an 8, 8 space, from window space
      *
+     * @param pos
      * @return The scaled vector
      */
     public static Vector2 ScalePosToBoardSpace(Vector2 pos) {
