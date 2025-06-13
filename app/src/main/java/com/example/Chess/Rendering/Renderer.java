@@ -4,6 +4,7 @@ import com.example.Chess.Chess.ChessBoard;
 import com.example.Chess.Chess.ChessPiece;
 import com.example.Chess.Chess.GameState;
 import com.example.Chess.Globals;
+import com.example.Chess.Quantum.Moveset;
 import com.raylib.Raylib;
 import com.example.Chess.UI.UI;
 
@@ -63,6 +64,7 @@ public class Renderer
 
             ChessBoard.chessPieces[i].DrawPiece();
         }
+        Moveset.RenderSecondPiece();
     }
 
     static double radius;

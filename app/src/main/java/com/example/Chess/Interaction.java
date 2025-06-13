@@ -7,7 +7,7 @@ import com.example.Chess.Chess.GameState;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PieceMovePacket;
 
-import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
+//import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
 import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
 
 import com.example.Chess.UI.QuantumUiButton;
@@ -67,6 +67,7 @@ public class Interaction
                 {
                     HandlePieceMove(mousePos);
                 }
+
             }
         }
 
@@ -143,7 +144,7 @@ public class Interaction
         }
     }
 
-    private static void HighlightSpot() {
+    public static void HighlightSpot() {
         //Draw a square to show what position is highlighted
         Vector2 mousePos = new Vector2(Raylib.GetMousePosition().x(), Raylib.GetMousePosition().y());
 

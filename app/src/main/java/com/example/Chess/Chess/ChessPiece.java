@@ -22,6 +22,10 @@ public abstract class ChessPiece {
      * False for white True for black
      */
     public boolean side;
+//    public ChessPiece Copy() {
+//        return new ChessPiece(this.id, this.color, new Vector2(this.position.x(), this.position.y()));
+//    }
+
 
     public void Init() {
         LoadImageToPiece();

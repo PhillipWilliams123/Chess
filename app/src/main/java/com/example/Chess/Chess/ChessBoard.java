@@ -41,41 +41,36 @@ public class ChessBoard {
             freeChessPieceIds.add(i);
         }
     }
+  
+    public static void InitStandardGame()
+    {
+        //top row
+        AddPiece(new Rook(new Vector2(0,0), true));
+        AddPiece(new Knight(new Vector2(1,0), true));
+        AddPiece(new Bishop(new Vector2(2,0), true));
+        AddPiece(new King(new Vector2(4,0), true));
+        AddPiece(new Queen(new Vector2(3,0), true));
+        AddPiece(new Bishop(new Vector2(5,0), true));
+        AddPiece(new Knight(new Vector2(6,0), true));
+        AddPiece(new Rook(new Vector2(7,0), true));
 
-    public static void InitStandardGame() {
-        // Initialize the board
-        Init();
-
-        // White pieces (indices 0-15)
-        addPieceWithIndex(new Rook(new Vector2(0, 0), true), true,0);
-        addPieceWithIndex(new Knight(new Vector2(1, 0), true), true, 1);
-        addPieceWithIndex(new Bishop(new Vector2(2, 0), true), true, 2);
-        addPieceWithIndex(new Queen(new Vector2(3, 0), true), true, 3);
-        addPieceWithIndex(new King(new Vector2(4, 0), true), true, 4);
-        addPieceWithIndex(new Bishop(new Vector2(5, 0), true), true, 5);
-        addPieceWithIndex(new Knight(new Vector2(6, 0), true), true, 6);
-        addPieceWithIndex(new Rook(new Vector2(7, 0), true), true, 7);
-        for (int i = 0; i < 8; i++) {
-            addPieceWithIndex(new Pawn(new Vector2(i, 1), true), true, 8 + i);
+        for (int i = 0; i < 8; i++)
+        {
+            AddPiece(new Pawn(new Vector2(i,1), true));
         }
-
+  
         // Black pieces (indices 0-15)
-        addPieceWithIndex(new Rook(new Vector2(0, 7), false), false, 0);
-        addPieceWithIndex(new Knight(new Vector2(1, 7), false), false, 1);
-        addPieceWithIndex(new Bishop(new Vector2(2, 7), false), false, 2);
-        addPieceWithIndex(new Queen(new Vector2(3, 7), false), false, 3);
-        addPieceWithIndex(new King(new Vector2(4, 7), false), false, 4);
-        addPieceWithIndex(new Bishop(new Vector2(5, 7), false), false, 5);
-        addPieceWithIndex(new Knight(new Vector2(6, 7), false), false, 6);
-        addPieceWithIndex(new Rook(new Vector2(7, 7), false), false, 7);
+        AddPiece(new Rook(new Vector2(0, 7), false), false);
+        AddPiece(new Knight(new Vector2(1, 7), false), false);
+        AddPiece(new Bishop(new Vector2(2, 7), false), false);
+        AddPiece(new Queen(new Vector2(3, 7), false), false);
+        AddPiece(new King(new Vector2(4, 7), false), false;
+        AddPiece(new Bishop(new Vector2(5, 7), false), false);
+        AddPiece(new Knight(new Vector2(6, 7), false), false);
+        AddPiece(new Rook(new Vector2(7, 7), false), false);
         for (int i = 0; i < 8; i++) {
-            addPieceWithIndex(new Pawn(new Vector2(i, 6), false), false, 8 + i);
+            AddPiece(new Pawn(new Vector2(i, 6), false), false);
         }
-    }
-
-    private static void addPieceWithIndex(ChessPiece piece, boolean isWhite, int index) {
-        piece.pieceIndex = index;
-        AddPiece(piece);
     }
 
     /**
