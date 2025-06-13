@@ -128,7 +128,7 @@ public class Pawn extends ChessPiece {
             }
 
             if (CheckInDirection(forwardOne, position, pos) == 1
-                    && ChessBoard.GetPieceIdAtPos(pos) == -1) {
+                    && ChessBoard.GetPieceIdAtPos(Vector2.Add(position, forwardOne)) == -1) {
                 return true;
             }
         } 
