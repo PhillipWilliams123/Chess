@@ -16,7 +16,6 @@ public abstract class ChessPiece {
     public int id;
     public Vector2 position;
     public Texture image;
-    public int pieceIndex; // Add this line
 
     /**
      * False for white True for black
@@ -50,20 +49,26 @@ public abstract class ChessPiece {
         double xScale = Globals.ChessWidth / (double) ChessBoard.boardSize;
         double yScale = Globals.ScreenHeight / (double) ChessBoard.boardSize;
 
-        for (int i = 0; i < ChessBoard.boardSize; i++) {
-            for (int j = 0; j < ChessBoard.boardSize; j++) {
-                if (CheckMove(new Vector2(i, j))) {
+        for (int x = 0; x < ChessBoard.boardSize; x++) {
+            for (int y = 0; y < ChessBoard.boardSize; y++) {
+                Vector2 pos = new Vector2(x, y);
+                if (CheckMove(pos)) {
                     Color color = GREEN;
                     color.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1) + 50));
-
-                    Raylib.DrawRectangle((int) Math.floor(i * xScale), (int) Math.floor(j * yScale), (int) xScale, (int) yScale, color);
+                    Raylib.DrawRectangle(
+                            (int) Math.floor(x * xScale),
+                            (int) Math.floor(y * yScale),
+                            (int) xScale,
+                            (int) yScale,
+                            color
+                    );
                 }
             }
         }
     }
 
     public int moveCount = 0;
-    
+
     /**
      * Will set the piece to a position considering other systems in the
      * ChessBoard
@@ -187,16 +192,4 @@ public abstract class ChessPiece {
     }
 
     public abstract ChessPiece Copy();
-
-    /**
-     * gets the type of chess piece that it is
-     * 1 - pawn
-     * 2 - knight
-     * 3 - bishop
-     * 4 - rook
-     * 5 - queen
-     * 6 - king
-     * @return the number that corresponds the type
-     */
-    public abstract int GetPieceType();
 }
