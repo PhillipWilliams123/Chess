@@ -50,7 +50,7 @@ public class QuantumUiButton {
         if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_RIGHT)) {
             IsQuantumUiOpen = !IsQuantumUiOpen; // toggle UI
             if (IsQuantumUiOpen) {
-                FindButtonslocation(); // set position only once
+                //FindButtonslocation(); // set position only once
             }
         }
     }

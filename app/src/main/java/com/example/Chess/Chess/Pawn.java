@@ -119,34 +119,33 @@ public class Pawn extends ChessPiece {
         }
 
         // Forward moves
-        if (pos.x == position.x) {
-            if ((position.y == 1 || position.y == 6)
-                    && CheckInDirection(forwardOne, position, pos) == 2
-                    && ChessBoard.GetPieceIdAtPos(Vector2.Add(position, forwardOne)) == -1
-                    && ChessBoard.GetPieceIdAtPos(pos) == -1) {
+        if ((position.y == 1 || position.y == 6) && CheckInDirection(forwardOne, position, pos) == 2)
+        {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, Vector2.Mul(forwardOne, 2))) == -1)
+            {
                 return true;
             }
-
-            if (CheckInDirection(forwardOne, position, pos) == 1
-                    && ChessBoard.GetPieceIdAtPos(Vector2.Add(position, forwardOne)) == -1) {
+        }
+        if (CheckInDirection(forwardOne, position, pos) == 1)
+        {
+            if(ChessBoard.GetPieceIdAtPos(Vector2.Add(position, forwardOne)) == -1)
+            {
                 return true;
             }
-        } 
+        }
         // Diagonal captures
-        else {
-            Vector2 diff = Vector2.Sub(pos, position);
-            if (Math.abs(diff.x) == 1 && diff.y == direction) {
-                int targetId = ChessBoard.GetPieceIdAtPos(pos);
-                if (targetId != -1) {
-                    return ChessBoard.chessPieces[targetId].side != this.side;
-                }
+        Vector2 diff = Vector2.Sub(pos, position);
+        if (Math.abs(diff.x) == 1 && diff.y == direction) {
+            int targetId = ChessBoard.GetPieceIdAtPos(pos);
+            if (targetId != -1) {
+                return ChessBoard.chessPieces[targetId].side != this.side;
             }
         }
         return false;
     }
 
     private boolean canEnPassant(Vector2 pos) {
-        if (Interaction.isBlackTurn == this.side) {
+        if (GameState.isBlackTurn == this.side) {
             return false;
         }
 

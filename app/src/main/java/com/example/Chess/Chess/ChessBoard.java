@@ -1,7 +1,6 @@
 package com.example.Chess.Chess;
 
 import com.example.Chess.Globals;
-import static com.example.Chess.Interaction.isBlackTurn;
 import com.example.Chess.Vector2;
 
 import java.util.LinkedList;
@@ -29,7 +28,7 @@ public class ChessBoard {
      * Initializes the chess board
      */
     public static void Init() {
-        isBlackTurn = true;
+        GameState.isBlackTurn = true;
         chessPieces = new ChessPiece[boardSize * boardSize];
         chessPieceIds = new int[boardSize * boardSize];
         freeChessPieceIds = new LinkedList<>();
@@ -60,16 +59,16 @@ public class ChessBoard {
         }
   
         // Black pieces (indices 0-15)
-        AddPiece(new Rook(new Vector2(0, 7), false), false);
-        AddPiece(new Knight(new Vector2(1, 7), false), false);
-        AddPiece(new Bishop(new Vector2(2, 7), false), false);
-        AddPiece(new Queen(new Vector2(3, 7), false), false);
-        AddPiece(new King(new Vector2(4, 7), false), false;
-        AddPiece(new Bishop(new Vector2(5, 7), false), false);
-        AddPiece(new Knight(new Vector2(6, 7), false), false);
-        AddPiece(new Rook(new Vector2(7, 7), false), false);
+        AddPiece(new Rook(new Vector2(0, 7), false));
+        AddPiece(new Knight(new Vector2(1, 7), false));
+        AddPiece(new Bishop(new Vector2(2, 7), false));
+        AddPiece(new Queen(new Vector2(3, 7), false));
+        AddPiece(new King(new Vector2(4, 7), false));
+        AddPiece(new Bishop(new Vector2(5, 7), false));
+        AddPiece(new Knight(new Vector2(6, 7), false));
+        AddPiece(new Rook(new Vector2(7, 7), false));
         for (int i = 0; i < 8; i++) {
-            AddPiece(new Pawn(new Vector2(i, 6), false), false);
+            AddPiece(new Pawn(new Vector2(i, 6), false));
         }
     }
 

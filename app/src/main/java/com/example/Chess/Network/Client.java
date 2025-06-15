@@ -67,6 +67,9 @@ public class Client implements Runnable
 
             SendPacket(new PingPacket());
 
+            GameState.Init();
+            ChessBoard.Init();
+
         } catch (IOException e)
         {
             System.out.println("[CLIENT] Could not connect to " + ip + ":" + port);

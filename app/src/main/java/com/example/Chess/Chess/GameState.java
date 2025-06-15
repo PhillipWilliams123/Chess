@@ -4,6 +4,7 @@ import com.example.Chess.Interaction;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.StatePacket;
 import com.example.Chess.Rendering.Renderer;
+import com.example.Chess.Rules.OriginalRules;
 import com.example.Chess.Vector2;
 
 import java.util.ArrayList;
@@ -37,34 +38,12 @@ public class GameState
     {
         if(NetworkManager.isClient)
         {
-            int kingID = -1;
-            Vector2 kingPos = null;
-
-            // Find our king
-            for (int i = 0; i < ChessBoard.chessPieces.length; i++)
-            {
-                if (ChessBoard.chessPieces[i].id == -1)
-                    continue;
-
-                //check for white king
-                if (ChessBoard.chessPieces[i].GetPieceType() == 6 && ChessBoard.chessPieces[i].side == ourSide)
-                {
-                    kingID = i;
-                    kingPos = ChessBoard.chessPieces[i].position;
-                    break;
-                }
-            }
-
-            //we could not find a white king
-            if (kingID == -1)
-                return;
-
             if(!inCheck)
             {
-                inCheck = KingCheck(!ourSide, kingPos);
+                inCheck = OriginalRules.isInCheck(!ourSide);
                 if (inCheck)
                 {
-                    if(KingCheckMate(!ourSide, kingID))
+                    if(OriginalRules.isCheckmate(!ourSide))
                     {
                         //we have won
                         if(ourSide)
@@ -76,69 +55,17 @@ public class GameState
                             Renderer.Draw2d = false;
                         }
                     }
-                    else
-                    {
-
-                    }
                 }
             }
         }
         else
         {
-            int kingIDWhite = -1;
-            int kingIDBlack = -1;
-            Vector2 kingPosWhite = null;
-            Vector2 kingPosBlack = null;
-
-            // Find our king
-            for (int i = 0; i < ChessBoard.chessPieces.length; i++)
-            {
-                if (ChessBoard.chessPieces[i].id == -1)
-                    continue;
-
-                //check for white king
-                if (ChessBoard.chessPieces[i].GetPieceType() == 6 && ChessBoard.chessPieces[i].side == !ourSide)
-                {
-                    kingIDWhite = i;
-                    kingPosWhite = ChessBoard.chessPieces[i].position;
-                }
-                else if(ChessBoard.chessPieces[i].GetPieceType() == 6 && ChessBoard.chessPieces[i].side == ourSide)
-                {
-                    kingIDBlack = i;
-                    kingPosBlack =  ChessBoard.chessPieces[i].position;
-
-                }
-            }
-
-            //we could not find a white king
-            if (kingIDWhite == -1)
-                return;
-
             if(!inCheck)
             {
-                inCheck = KingCheck(ourSide, kingPosWhite);
+                inCheck = OriginalRules.isInCheck(!ourSide);
                 if (inCheck)
                 {
-                    if(KingCheckMate(ourSide, kingIDWhite))
-                    {
-                        //we have lost
-                        Interaction.disableInteraction = true;
-                        GameState.lost = true;
-                        Renderer.Draw2d = false;
-                    }
-                }
-            }
-
-            //we could not find a black king
-            if(kingIDBlack == -1)
-                return;
-
-            if(!inCheck)
-            {
-                inCheck = KingCheck(!ourSide, kingPosBlack);
-                if (inCheck)
-                {
-                    if(KingCheckMate(!ourSide, kingIDBlack))
+                    if(OriginalRules.isCheckmate(!ourSide))
                     {
                         //we have lost
                         Interaction.disableInteraction = true;

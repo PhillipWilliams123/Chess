@@ -80,6 +80,9 @@ public class OriginalRules {
         ChessPiece capturedPiece = ChessBoard.GetChessPieceAtPos(newPos);
         int capturedId = ChessBoard.GetPieceIdAtPos(newPos);
 
+        if(capturedId == -1)
+            return false;
+
         king.SetToPosition(newPos);
         if (capturedPiece != null) {
             ChessBoard.SetPieceIdAtPos(newPos, king.id);
@@ -106,6 +109,9 @@ public class OriginalRules {
                 ChessPiece capturedPiece = target;
                 int capturedId = ChessBoard.GetPieceIdAtPos(target.position);
 
+                if(capturedId == -1)
+                    continue;
+
                 piece.SetToPosition(target.position);
                 ChessBoard.SetPieceIdAtPos(target.position, piece.id);
                 ChessBoard.SetPieceIdAtPos(originalPos, -1);
@@ -131,6 +137,9 @@ public class OriginalRules {
                 Vector2 originalPos = piece.position;
                 ChessPiece capturedPiece = ChessBoard.GetChessPieceAtPos(blockPos);
                 int capturedId = ChessBoard.GetPieceIdAtPos(blockPos);
+
+                if(capturedId == -1)
+                    continue;
 
                 piece.SetToPosition(blockPos);
                 if (capturedPiece != null) {

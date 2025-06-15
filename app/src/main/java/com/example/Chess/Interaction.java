@@ -10,6 +10,7 @@ import com.example.Chess.Network.Packets.PieceMovePacket;
 //import static com.example.Chess.UI.QuantumUiButton.CheckRightClick;
 import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
 
+import com.example.Chess.Rules.OriginalRules;
 import com.example.Chess.UI.QuantumUiButton;
 import com.raylib.Raylib;
 
@@ -24,11 +25,6 @@ public class Interaction
     //Stores position when piece was selected
     private static Vector2 currentSelectedPosition;
     public static boolean disableInteraction;
-
-    //Track whose turn it is (true = black's turn; false = white's turn)
-    public static boolean isBlackTurn = true;
-    //if we are in a multiplayer game we need to lock our movement
-    public static boolean isOurTurn = false;
 
     public static void Update() {
 
@@ -94,7 +90,7 @@ public class Interaction
 
 
             //Only allow selecting pieces of the current player's color
-            if (piece.id != -1 && piece.side == GameState.isBlackTurn) {
+            if (piece.id != -1 && piece.side == !GameState.isBlackTurn) {
                 currentSelectedPosition = mousePos;
                 currentSelectedPiece = ChessBoard.GetPieceIdAtPos(mousePos);
             }
@@ -116,10 +112,10 @@ public class Interaction
 
             if (selectedPiece.TryMove(mousePos))
             {
-                if(GameState.inCheck)
+                /*if(GameState.inCheck)
                 {
                     GameState.inCheck = false;
-                    GameState.CheckKingStatus();
+                    GameState.inCheck = OriginalRules.isInCheck(!GameState.ourSide);
                     if(GameState.inCheck)
                     {
                         //revert move as we are still in check
@@ -127,7 +123,7 @@ public class Interaction
                         currentSelectedPiece = -1;
                         return;
                     }
-                }
+                }*/
 
                 //Valid move - switch turns
                 GameState.isBlackTurn = !GameState.isBlackTurn;
@@ -159,7 +155,7 @@ public class Interaction
         Raylib.Color highColor = RED;
         if(GameState.isOurTurn)
         {
-            if(ChessBoard.GetChessPieceAtPos(mousePos).side == GameState.isBlackTurn)
+            if(ChessBoard.GetChessPieceAtPos(mousePos).side == !GameState.isBlackTurn)
                 highColor = GREEN;
         }
         highColor.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1)));
