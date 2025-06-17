@@ -8,7 +8,7 @@ import java.util.List;
 public class OriginalRules {
 
     public static boolean isInCheckValidating = false;
-    public static boolean[] whiteCastlingRights = {true, true}; // [kingside, queenside]
+    public static boolean[] whiteCastlingRights = {true, true};
     public static boolean[] blackCastlingRights = {true, true};
 
     public static boolean isInCheck(boolean isBlack) {
@@ -20,7 +20,8 @@ public class OriginalRules {
         isInCheckValidating = true;
         try {
             for (ChessPiece piece : ChessBoard.chessPieces) {
-                if (piece != null && piece.side != isBlack && piece.CheckMove(kingPos)) {
+                if (piece != null && piece.id != -1 && piece.side != isBlack
+                        && !QuantumRules.isQuantumPiece(piece) && piece.CheckMove(kingPos)) {
                     return true;
                 }
             }
@@ -30,52 +31,6 @@ public class OriginalRules {
         }
     }
 
-    private static boolean canKingEscapeCheck(ChessPiece king) {
-        // Check all 8 possible king moves
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0) {
-                    continue;
-                }
-
-                Vector2 movePos = new Vector2(king.position.x + dx, king.position.y + dy);
-
-                if (king.CheckMove(movePos) && !wouldMovePutKingInCheck(king, movePos, king.side)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static boolean canAttackerBeCaptured(ChessPiece attacker, boolean isBlack) {
-        for (ChessPiece piece : ChessBoard.chessPieces) {
-            if (piece != null && piece.id != -1 && piece.side == isBlack) {
-                // Save original state
-                Vector2 originalPos = piece.position;
-                int attackerId = attacker.id;
-
-                // Simulate capture
-                piece.SetToPosition(attacker.position);
-                ChessBoard.SetPieceIdAtPos(originalPos, -1);
-                ChessBoard.SetPieceIdAtPos(attacker.position, piece.id);
-
-                boolean stillInCheck = isInCheck(isBlack);
-
-                // Restore state
-                piece.SetToPosition(originalPos);
-                ChessBoard.SetPieceIdAtPos(originalPos, piece.id);
-                ChessBoard.SetPieceIdAtPos(attacker.position, attackerId);
-
-                if (!stillInCheck) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-// Update the isCheckmate method to use this:
     public static boolean isCheckmate(boolean isBlack) {
         if (!isInCheck(isBlack)) {
             return false;
@@ -86,26 +41,23 @@ public class OriginalRules {
             return false;
         }
 
-        // 1. Check if king can move out of check
+        // Check if king can move out of check
         if (canKingEscapeCheck(king)) {
             return false;
         }
 
         List<ChessPiece> attackers = getCheckingPieces(isBlack);
-
-        // If multiple attackers, only king can move (already checked above)
         if (attackers.size() > 1) {
-            return true;
+            return true; // Double check - only king can move
         }
-
         ChessPiece attacker = attackers.get(0);
 
-        // 2. Check if attacker can be captured
-        if (canAttackerBeCaptured(attacker, isBlack)) {
+        // Check if attacker can be captured
+        if (canPieceBeCaptured(attacker, isBlack)) {
             return false;
         }
 
-        // 3. For sliding pieces, check if attack can be blocked
+        // For sliding pieces, check if attack can be blocked
         if (attacker instanceof Queen || attacker instanceof Rook || attacker instanceof Bishop) {
             if (canAttackBeBlocked(king, attacker, isBlack)) {
                 return false;
@@ -115,28 +67,106 @@ public class OriginalRules {
         return true;
     }
 
+    private static boolean canKingEscapeCheck(ChessPiece king) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+
+                Vector2 movePos = new Vector2(king.position.x + dx, king.position.y + dy);
+                if (!ChessBoard.PosInBounds(movePos)) {
+                    continue;
+                }
+
+                ChessPiece target = ChessBoard.GetChessPieceAtPos(movePos);
+                if (target.id != -1 && target.side == king.side) {
+                    continue;
+                }
+
+                if (king.CheckMove(movePos) && !wouldQuantumMovePutKingInCheck(king, movePos, king.side)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean canPieceBeCaptured(ChessPiece target, boolean isBlack) {
+        for (ChessPiece piece : ChessBoard.chessPieces) {
+            if (piece == null || piece.side != isBlack || piece.id == -1) {
+                continue;
+            }
+
+            // Skip if piece is the king (handled separately)
+            if (piece instanceof King) {
+                continue;
+            }
+
+            if (piece.CheckMove(target.position)) {
+                // Handle quantum captures differently
+                if (QuantumRules.isQuantumPiece(piece) || QuantumRules.isQuantumPiece(target)) {
+                    // Quantum captures are handled by the collapse system
+                    return true; // Assume it's possible to capture
+                }
+
+                // Normal capture simulation
+                Vector2 originalPos = piece.position;
+                int targetId = target.id;
+                ChessPiece capturedPiece = ChessBoard.chessPieces[targetId];
+
+                piece.SetToPosition(target.position);
+                ChessBoard.SetPieceIdAtPos(originalPos, -1);
+                ChessBoard.SetPieceIdAtPos(target.position, piece.id);
+                ChessBoard.chessPieces[targetId] = new EmptyPiece();
+
+                boolean stillInCheck = isInCheck(isBlack);
+
+                // Restore state
+                piece.SetToPosition(originalPos);
+                ChessBoard.SetPieceIdAtPos(originalPos, piece.id);
+                ChessBoard.SetPieceIdAtPos(target.position, targetId);
+                ChessBoard.chessPieces[targetId] = capturedPiece;
+
+                if (!stillInCheck) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean canAttackBeBlocked(ChessPiece king, ChessPiece attacker, boolean isBlack) {
         List<Vector2> path = getPathBetween(king.position, attacker.position);
         for (Vector2 blockPos : path) {
             for (ChessPiece piece : ChessBoard.chessPieces) {
-                if (piece != null && piece.side == isBlack && piece != king) {
-                    if (piece.CheckMove(blockPos)) {
-                        // Simulate block
-                        Vector2 originalPos = piece.position;
-                        piece.SetToPosition(blockPos);
-                        ChessBoard.SetPieceIdAtPos(originalPos, -1);
-                        ChessBoard.SetPieceIdAtPos(blockPos, piece.id);
+                if (piece == null || piece.side != isBlack || piece.id == -1) {
+                    continue;
+                }
 
-                        boolean stillInCheck = isInCheck(isBlack);
+                if (piece.CheckMove(blockPos)) {
+                    // Simulate block
+                    Vector2 originalPos = piece.position;
+                    int blockPosId = ChessBoard.GetPieceIdAtPos(blockPos);
+                    ChessPiece blockPiece = blockPosId != -1 ? ChessBoard.chessPieces[blockPosId] : null;
 
-                        // Undo simulation
-                        piece.SetToPosition(originalPos);
-                        ChessBoard.SetPieceIdAtPos(originalPos, piece.id);
+                    piece.SetToPosition(blockPos);
+                    ChessBoard.SetPieceIdAtPos(originalPos, -1);
+                    ChessBoard.SetPieceIdAtPos(blockPos, piece.id);
+
+                    boolean stillInCheck = isInCheck(isBlack);
+
+                    // Restore state
+                    piece.SetToPosition(originalPos);
+                    ChessBoard.SetPieceIdAtPos(originalPos, piece.id);
+                    if (blockPiece != null) {
+                        ChessBoard.SetPieceIdAtPos(blockPos, blockPosId);
+                    } else {
                         ChessBoard.SetPieceIdAtPos(blockPos, -1);
+                    }
 
-                        if (!stillInCheck) {
-                            return true;
-                        }
+                    if (!stillInCheck) {
+                        return true;
                     }
                 }
             }
@@ -144,42 +174,12 @@ public class OriginalRules {
         return false;
     }
 
-    public static boolean isStalemate(boolean isBlack) {
-        if (isInCheck(isBlack)) {
+    public static boolean wouldMovePutKingInCheck(ChessPiece piece, Vector2 targetPos, boolean isBlack) {
+        // Quantum pieces can't put king in check
+        if (QuantumRules.isQuantumPiece(piece)) {
             return false;
         }
 
-        // Check if any legal moves exist
-        for (ChessPiece piece : ChessBoard.chessPieces) {
-            if (piece != null && piece.side == isBlack) {
-                List<Vector2> legalMoves = filterLegalMoves(piece, isBlack);
-                if (!legalMoves.isEmpty()) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public static List<Vector2> filterLegalMoves(ChessPiece piece, boolean isBlack) {
-        List<Vector2> legalMoves = new ArrayList<>();
-
-        for (int x = 0; x < ChessBoard.boardSize; x++) {
-            for (int y = 0; y < ChessBoard.boardSize; y++) {
-                Vector2 targetPos = new Vector2(x, y);
-                if (piece.CheckMove(targetPos)) {
-                    if (!wouldMovePutKingInCheck(piece, targetPos, isBlack)) {
-                        legalMoves.add(targetPos);
-                    }
-                }
-            }
-        }
-
-        return legalMoves;
-    }
-
-    public static boolean wouldMovePutKingInCheck(ChessPiece piece, Vector2 targetPos, boolean isBlack) {
         // Save original state
         Vector2 originalPos = piece.position;
         int targetId = ChessBoard.GetPieceIdAtPos(targetPos);
@@ -187,23 +187,31 @@ public class OriginalRules {
 
         // Simulate the move
         piece.SetToPosition(targetPos);
+        ChessBoard.SetPieceIdAtPos(originalPos, -1);
+        ChessBoard.SetPieceIdAtPos(targetPos, piece.id);
         if (targetId != -1) {
-            ChessBoard.SetPieceIdAtPos(targetPos, piece.id);
-            ChessBoard.SetPieceIdAtPos(originalPos, -1);
+            ChessBoard.chessPieces[targetId] = new EmptyPiece();
         }
 
         boolean inCheck = isInCheck(isBlack);
 
         // Restore original state
         piece.SetToPosition(originalPos);
+        ChessBoard.SetPieceIdAtPos(originalPos, piece.id);
+        ChessBoard.SetPieceIdAtPos(targetPos, targetId);
         if (targetId != -1) {
             ChessBoard.chessPieces[targetId] = capturedPiece;
-            ChessBoard.SetPieceIdAtPos(targetPos, targetId);
-        } else {
-            ChessBoard.SetPieceIdAtPos(targetPos, -1);
         }
 
         return inCheck;
+    }
+
+    public static boolean wouldQuantumMovePutKingInCheck(ChessPiece piece, Vector2 targetPos, boolean isBlack) {
+        // Quantum pieces can never put king in check
+        if (QuantumRules.isQuantumPiece(piece)) {
+            return false;
+        }
+        return wouldMovePutKingInCheck(piece, targetPos, isBlack);
     }
 
     private static List<ChessPiece> getCheckingPieces(boolean side) {
@@ -260,5 +268,34 @@ public class OriginalRules {
     private static Vector2 findKingPosition(boolean isBlack) {
         ChessPiece king = findKing(isBlack);
         return king != null ? king.position : null;
+    }
+
+    public static void updateGameState(ChessPiece movedPiece, Vector2 originalPos) {
+        // Update castling rights
+        if (movedPiece instanceof King) {
+            if (movedPiece.side) {
+                whiteCastlingRights[0] = false;
+                whiteCastlingRights[1] = false;
+            } else {
+                blackCastlingRights[0] = false;
+                blackCastlingRights[1] = false;
+            }
+        } else if (movedPiece instanceof Rook) {
+            if (movedPiece.side) {
+                if (originalPos.x == 0) {
+                    whiteCastlingRights[1] = false;
+                }
+                if (originalPos.x == 7) {
+                    whiteCastlingRights[0] = false;
+                }
+            } else {
+                if (originalPos.x == 0) {
+                    blackCastlingRights[1] = false;
+                }
+                if (originalPos.x == 7) {
+                    blackCastlingRights[0] = false;
+                }
+            }
+        }
     }
 }
