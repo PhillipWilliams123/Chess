@@ -57,6 +57,10 @@ public class Knight extends ChessPiece {
     }
 
     private boolean basicCheckMove(Vector2 pos) {
+        if (position == null || pos == null) {
+            return false;
+        }
+
         // Calculate the absolute differences in coordinates
         double dx = Math.abs(pos.x - position.x);
         double dy = Math.abs(pos.y - position.y);
@@ -74,12 +78,8 @@ public class Knight extends ChessPiece {
 
     @Override
     public ChessPiece Copy() {
-        return new Knight(new Vector2(position.x, position.y), side);
-    }
-
-    @Override
-    public int GetPieceType()
-    {
-        return 2;
+        Knight copy = new Knight(new Vector2(this.position), this.side);
+        copy.moveCount = this.moveCount;
+        return copy;
     }
 }
