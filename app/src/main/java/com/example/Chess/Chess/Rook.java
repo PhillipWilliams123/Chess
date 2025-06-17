@@ -72,10 +72,4 @@ public class Rook extends ChessPiece {
     public ChessPiece Copy() {
         return new Rook(this.position, this.side);
     }
-
-    @Override
-    public int GetPieceType()
-    {
-        return 4;
-    }
 }
