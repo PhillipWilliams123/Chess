@@ -22,88 +22,70 @@ public class King extends ChessPiece {
             return false;
         }
 
-        // Handle normal moves
-        if (Math.abs(pos.x - position.x) <= 1 && Math.abs(pos.y - position.y) <= 1) {
-            return attemptMove(pos);
-        }
-
-        // Handle castling
-        if (Math.abs(pos.x - position.x) == 2 && pos.y == position.y) {
+        //Handle castling separately
+        if (Math.abs(pos.x - position.x) == 2) {
             return performCastling(pos);
         }
 
-        return false;
+        ChessPiece targetPiece = ChessBoard.GetChessPieceAtPos(pos);
+        int targetId = targetPiece != null ? targetPiece.id : -1;
+
+        // Save original state
+        Vector2 originalPos = new Vector2(position.x, position.y);
+
+        // Simulate the move
+        SetToPosition(pos);
+        ChessBoard.SetPieceIdAtPos(originalPos, -1);
+        ChessBoard.SetPieceIdAtPos(pos, id);
+
+        // Special case: when capturing, temporarily remove the captured piece
+        if (targetPiece != null && targetPiece.id != -1) {
+            ChessBoard.chessPieces[targetId] = new EmptyPiece();
+        }
+
+        boolean inCheckAfterMove = OriginalRules.isInCheck(side);
+
+        // Restore state
+        SetToPosition(originalPos);
+        ChessBoard.SetPieceIdAtPos(originalPos, id);
+        ChessBoard.SetPieceIdAtPos(pos, targetId);
+        if (targetPiece != null && targetPiece.id != -1) {
+            ChessBoard.chessPieces[targetId] = targetPiece;
+        }
+
+        if (inCheckAfterMove) {
+            return false;
+        }
+
+        // Actually perform the move
+        if (targetPiece != null && targetPiece.id != -1 && targetPiece.side != this.side) {
+            TryTakePiece(pos);
+        }
+        SetToPosition(pos);
+        return true;
     }
 
     @Override
     public boolean CheckMove(Vector2 pos) {
-        // First check if position is valid
-        if (!ChessBoard.PosInBounds(pos)) {
+        if (!ChessBoard.PosInBounds(pos) || pos.equals(position)) {
             return false;
         }
 
         double dx = Math.abs(pos.x - position.x);
         double dy = Math.abs(pos.y - position.y);
 
-        // Normal king move (1 square in any direction)
-        if ((dx <= 1 && dy <= 1) && (dx + dy > 0)) {
-            int targetId = ChessBoard.GetPieceIdAtPos(pos);
-            // Can't capture own piece
-            if (targetId != -1 && ChessBoard.chessPieces[targetId].side == this.side) {
-                return false;
-            }
-            
-            // Check if move would leave king in check
-            return !wouldMoveLeaveInCheck(pos);
+        //Normal king move (1 square in any direction)
+        if (dx <= 1 && dy <= 1) {
+            ChessPiece target = ChessBoard.GetChessPieceAtPos(pos);
+            return target.id == -1 || target.side != this.side;
         }
 
-        // Castling check
-        if (dx == 2 && dy == 0 && pos.y == position.y) {
+        //Castling check (simplified without hasMoved flag)
+        if (dx == 2 && dy == 0 && moveCount == 0) {
             return isValidCastling(pos);
         }
-        
+
         return false;
-    }
-
-    private boolean attemptMove(Vector2 pos) {
-        if (wouldMoveLeaveInCheck(pos)) {
-            return false;
-        }
-
-        int targetId = ChessBoard.GetPieceIdAtPos(pos);
-        if (targetId != -1) {
-            TryTakePiece(pos);
-        }
-        SetToPosition(pos);
-        moveCount++;
-        return true;
-    }
-
-    private boolean wouldMoveLeaveInCheck(Vector2 pos) {
-        // Save original state
-        Vector2 originalPos = new Vector2(position.x, position.y);
-        int originalId = ChessBoard.GetPieceIdAtPos(originalPos);
-        int targetId = ChessBoard.GetPieceIdAtPos(pos);
-        ChessPiece capturedPiece = targetId != -1 ? ChessBoard.chessPieces[targetId] : null;
-
-        // Simulate the move
-        ChessBoard.SetPieceIdAtPos(originalPos, -1);
-        position = new Vector2(pos.x, pos.y);
-        ChessBoard.SetPieceIdAtPos(pos, this.id);
-
-        boolean inCheck = OriginalRules.isInCheck(side);
-
-        // Restore original state
-        position = originalPos;
-        ChessBoard.SetPieceIdAtPos(originalPos, originalId);
-        if (capturedPiece != null) {
-            ChessBoard.chessPieces[targetId] = capturedPiece;
-            ChessBoard.SetPieceIdAtPos(pos, targetId);
-        } else {
-            ChessBoard.SetPieceIdAtPos(pos, -1);
-        }
-
-        return inCheck;
     }
 
     private boolean performCastling(Vector2 targetPos) {
@@ -117,15 +99,15 @@ public class King extends ChessPiece {
         int y = (int) position.y;
 
         ChessPiece rook = ChessBoard.GetChessPieceAtPos(new Vector2(rookX, y));
-        if (rook == null || !(rook instanceof Rook)) {
+        if (rook == null || !(rook instanceof Rook) || rook.moveCount > 0) {
             return false;
         }
 
-        // Move the king
+        //Move the king
         SetToPosition(targetPos);
         moveCount++;
 
-        // Move the rook
+        //Move the rook
         rook.SetToPosition(new Vector2(newRookX, y));
         rook.moveCount++;
 
@@ -133,22 +115,19 @@ public class King extends ChessPiece {
     }
 
     private boolean isValidCastling(Vector2 targetPos) {
-        // Check if king has moved
         if (moveCount > 0 || OriginalRules.isInCheck(side)) {
             return false;
         }
 
-        // Determine castling side
         boolean kingside = targetPos.x > position.x;
         int rookX = kingside ? 7 : 0;
         ChessPiece rook = ChessBoard.GetChessPieceAtPos(new Vector2(rookX, position.y));
 
-        // Check if rook exists and hasn't moved
         if (!(rook instanceof Rook) || rook.moveCount > 0) {
             return false;
         }
 
-        // Check if path is clear
+        //Check if path is clear
         int direction = kingside ? 1 : -1;
         for (int x = (int) position.x + direction; x != rookX; x += direction) {
             if (ChessBoard.GetPieceIdAtPos(new Vector2(x, position.y)) != -1) {
@@ -156,7 +135,7 @@ public class King extends ChessPiece {
             }
         }
 
-        // Check if squares are not under attack
+        //Check if squares are not under attack
         for (int x = (int) position.x; x != (int) targetPos.x + direction; x += direction) {
             if (isSquareUnderAttack(new Vector2(x, position.y))) {
                 return false;
@@ -168,7 +147,7 @@ public class King extends ChessPiece {
 
     private boolean isSquareUnderAttack(Vector2 pos) {
         for (ChessPiece piece : ChessBoard.chessPieces) {
-            if (piece != null && piece.side != this.side && piece.CheckMove(pos)) {
+            if (piece != null && piece.id != -1 && piece.side != this.side && piece.CheckMove(pos)) {
                 return true;
             }
         }
@@ -177,14 +156,8 @@ public class King extends ChessPiece {
 
     @Override
     public ChessPiece Copy() {
-        King copy = new King(this.position, this.side);
+        King copy = new King(new Vector2(position.x, position.y), side);
         copy.moveCount = this.moveCount;
         return copy;
-    }
-
-    @Override
-    public int GetPieceType()
-    {
-        return 6;
     }
 }
