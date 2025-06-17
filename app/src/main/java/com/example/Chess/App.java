@@ -1,10 +1,12 @@
 package com.example.Chess;
+
 import com.example.Chess.Chess.*;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Chess.Rook;
 import com.example.Chess.Network.NetworkManager;
 import com.example.Chess.Network.Packets.PingPacket;
 import com.example.Chess.Rendering.Renderer;
+import com.example.Chess.Rules.QuantumRules;
 import com.example.Chess.UI.MutiUi;
 import com.example.Chess.UI.QuantumUiButton;
 import com.example.Chess.UI.UI;
@@ -21,14 +23,13 @@ import static com.raylib.Raylib.WindowShouldClose;
 
 import com.raylib.Raylib.Sound;
 
-public class App
-{
+public class App {
+
     public static Renderer mainRenderer;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         //starts our window (should move to its own file for the setup)
-        InitWindow(Globals.ChessWidth+Globals.UIWidth, Globals.ScreenHeight, "Chess");
+        InitWindow(Globals.ChessWidth + Globals.UIWidth, Globals.ScreenHeight, "Chess");
         SetTargetFPS(60);
 
         //create any classes and resource management
@@ -36,8 +37,7 @@ public class App
         //run setup of any classes and systems
         Initialize();
 
-        while (!WindowShouldClose())
-        {
+        while (!WindowShouldClose()) {
             //run our game loop
             Update();
 
@@ -52,15 +52,14 @@ public class App
             //Tells raylib that we have stopped drawing stuff
             EndDrawing();
         }
-        
+
         //does some cleanup
         CloseAudioDevice();
         CloseWindow();
         NetworkManager.CleanUp();
     }
 
-    public static void PreInitialize()
-    {
+    public static void PreInitialize() {
         mainRenderer = new Renderer();
 
         //get where the game is running
@@ -76,8 +75,7 @@ public class App
         Globals.SoundDirectory = Globals.ResourceDirectory + "Sounds/";
     }
 
-    public static void Initialize()
-    {
+    public static void Initialize() {
         InitAudioDevice();
 
         //initialize any systems
@@ -94,35 +92,32 @@ public class App
         mainRenderer.Draw2d = true;
     }
 
-    public static void Update()
-    {
+    public static void Update() {
         //Main update loop code
 
         NetworkManager.Update();
         UI.updateButtons();
-        //if(IsQuantumUiOpen){
-        //    QuantumUiButton.updateButtons();
-        //}
-
-        if(Interaction.currentSelectedPiece == -1)
+        if (IsQuantumUiOpen) {
+            QuantumUiButton.updateButtons();
+        }
+        
+        if (Interaction.currentSelectedPiece == -1) {
             GameState.CheckKingStatus();
+        }
     }
 
-    public static void Render()
-    {
+    public static void Render() {
         //any drawing commands should be put in here or rendering code
 
-        if(!mainRenderer.Draw2d)
+        if (!mainRenderer.Draw2d) {
             mainRenderer.Draw3DChessBoard();
+        }
         mainRenderer.DrawChessBoard();
         mainRenderer.DrawPieces();
         Interaction.Update();
         UI.RenderButtons();
-        if(IsQuantumUiOpen){
+        if (IsQuantumUiOpen) {
             QuantumUiButton.RenderButtons();
         }
-
-
-
     }
 }
