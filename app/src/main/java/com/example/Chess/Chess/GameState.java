@@ -12,12 +12,14 @@ public class GameState {
     public static boolean isOurTurn;
     public static boolean isBlackTurn;
     public static boolean ourSide;
-    public static boolean lost;
+    public static boolean whiteLost;  // Changed from 'lost' to specific side tracking
+    public static boolean blackLost;
     public static boolean inCheck;
 
     public static void Init() {
         IsQuantumUiOpen = false;
-        lost = false;
+        whiteLost = false;
+        blackLost = false;
         isBlackTurn = false;
         isOurTurn = !NetworkManager.isClient;
         ourSide = true;
@@ -47,7 +49,14 @@ public class GameState {
             NetworkManager.client.SendPacket(new StatePacket(true));
         }
         Interaction.disableInteraction = true;
-        lost = true;
+
+        // Set which side lost
+        if (isBlack) {
+            blackLost = true;  // Black lost (white won)
+        } else {
+            whiteLost = true;  // White lost (black won)
+        }
+
         Renderer.Draw2d = false;
     }
 }
