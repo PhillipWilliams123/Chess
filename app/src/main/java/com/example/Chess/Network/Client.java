@@ -290,19 +290,20 @@ public class Client implements Runnable
                 ChessBoard.InitStandardGame();
                 break;
             }
-            case 11:
-            {
+            case 11: {
                 StatePacket packet = new StatePacket();
                 packet.ByteToPacket(data);
 
-                if(packet.win)
-                {
-                    //we have lost
+                if (packet.win) {
+                    // We have lost
                     Interaction.disableInteraction = true;
-                    GameState.lost = true;
+                    if (GameState.ourSide) {
+                        GameState.whiteLost = true;  // We're white and lost
+                    } else {
+                        GameState.blackLost = true;  // We're black and lost
+                    }
                     Renderer.Draw2d = false;
                 }
-
                 break;
             }
         }
