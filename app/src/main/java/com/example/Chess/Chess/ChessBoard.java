@@ -3,6 +3,7 @@ package com.example.Chess.Chess;
 import com.example.Chess.Globals;
 import com.example.Chess.Vector2;
 import static com.example.Chess.Interaction.isBlackTurn;
+import static com.example.Chess.UI.QuantumUiButton.IsQuantumUiOpen;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -29,6 +30,7 @@ public class ChessBoard {
      */
     public static void Init() {
         isBlackTurn = false;
+        IsQuantumUiOpen = false;
         chessPieces = new ChessPiece[boardSize * boardSize];
         chessPieceIds = new int[boardSize * boardSize];
         freeChessPieceIds = new LinkedList<>();
@@ -162,22 +164,29 @@ public class ChessBoard {
      * the chessPiece class
      */
     public static void AddPiece(ChessPiece piece) {
-        //check if it's a valid spot on the board
+        // Check if it's a valid spot on the board
         if (!PosInBounds(piece.position)) {
             return;
         }
 
-        //check if there's already a piece there
+        // Check if there's already a piece there
         if (GetPieceIdAtPos(piece.position) != -1) {
             return;
         }
 
-        //we are good to add a piece
+        // We are good to add a piece
         int index = freeChessPieceIds.poll();
         chessPieces[index] = piece.Copy();
         chessPieces[index].id = index;
         chessPieces[index].Init();
         SetPieceIdAtPos(piece.position, index);
+    }
+
+    public static int getNextAvailableId() {
+        if (!ChessBoard.freeChessPieceIds.isEmpty()) {
+            return ChessBoard.freeChessPieceIds.peek();
+        }
+        return -1; // Shouldn't happen if board isn't full
     }
 
     /**
@@ -187,13 +196,16 @@ public class ChessBoard {
      * @param position the position of the piece to be "deleted"
      */
     public static void DeletePiece(Vector2 position) {
-        //check if it's a valid spot on the board
+        // Check if it's a valid spot on the board
         if (!PosInBounds(position)) {
             return;
         }
 
-        int id = GetChessPieceAtPos(position).id;
-        freeChessPieceIds.add(id);
-        chessPieces[id] = new EmptyPiece();
+        int id = GetPieceIdAtPos(position);
+        if (id != -1) {
+            freeChessPieceIds.add(id);
+            chessPieces[id] = new EmptyPiece();  // Replace with empty piece
+            SetPieceIdAtPos(position, -1);       // Clear the position's ID
+        }
     }
 }
