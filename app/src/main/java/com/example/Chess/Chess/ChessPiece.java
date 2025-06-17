@@ -3,6 +3,8 @@ package com.example.Chess.Chess;
 import static com.raylib.Raylib.*;
 
 import com.example.Chess.Globals;
+import com.example.Chess.Rules.QuantumRules;
+import com.example.Chess.UI.QuantumUiButton;
 import com.example.Chess.Vector2;
 import com.raylib.Raylib;
 import com.raylib.Raylib.Texture;
@@ -42,7 +44,11 @@ public abstract class ChessPiece {
      */
     public void DrawPiece() {
         Vector2 scaledPos = ChessBoard.ScalePosToBoardSpace(position);
-        DrawTexture(image, (int) scaledPos.x, (int) scaledPos.y, Globals.ChessPieceHue);
+        if (QuantumRules.entanglementMap.containsKey(this.id)) {
+            DrawTexture(image, (int) scaledPos.x, (int) scaledPos.y, BLUE);
+        } else {
+            DrawTexture(image, (int) scaledPos.x, (int) scaledPos.y, Globals.ChessPieceHue);
+        }
     }
 
     public void DrawPossibleMoves() {
@@ -54,6 +60,28 @@ public abstract class ChessPiece {
                 Vector2 pos = new Vector2(x, y);
                 if (CheckMove(pos)) {
                     Color color = GREEN;
+                    color.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1) + 50));
+                    Raylib.DrawRectangle(
+                            (int) Math.floor(x * xScale),
+                            (int) Math.floor(y * yScale),
+                            (int) xScale,
+                            (int) yScale,
+                            color
+                    );
+                }
+            }
+        }
+    }
+
+    public void DrawQuantumMoves() {
+        double xScale = Globals.ChessWidth / (double) ChessBoard.boardSize;
+        double yScale = Globals.ScreenHeight / (double) ChessBoard.boardSize;
+
+        for (int x = 0; x < ChessBoard.boardSize; x++) {
+            for (int y = 0; y < ChessBoard.boardSize; y++) {
+                Vector2 pos = new Vector2(x, y);
+                if (CheckMove(pos)) {
+                    Color color = BLUE;
                     color.a((byte) (65 * (Math.sin(Raylib.GetTime() * 5) + 1) + 50));
                     Raylib.DrawRectangle(
                             (int) Math.floor(x * xScale),
@@ -189,6 +217,15 @@ public abstract class ChessPiece {
         ChessBoard.DeletePiece(position);
         ChessSound.PlayCapture();
         return true;
+    }
+
+    protected boolean handleQuantumMove(Vector2 pos) {
+        if (QuantumRules.isQuantumPiece(this) && QuantumUiButton.IsQuantumUiOpen) {
+            // For quantum merge operations, bypass normal move rules
+            SetToPosition(pos);
+            return true;
+        }
+        return false;
     }
 
     public abstract ChessPiece Copy();
