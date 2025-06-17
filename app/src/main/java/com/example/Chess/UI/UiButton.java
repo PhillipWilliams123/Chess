@@ -17,46 +17,71 @@ public class UiButton {
     public Vector2 position;
     public Vector2 size;
     public String text;
-    /**
-     * Will lock the button from being clicked
-     */
     public boolean lock;
     public boolean draw;
+    private boolean acceptRightClick; // New field to control right-click behavior
 
-    public UiButton(Vector2 position, Vector2 size, String text)
-    {
+    public UiButton(Vector2 position, Vector2 size, String text) {
+        this(position, size, text, false); // Default to not accepting right clicks
+    }
+
+    // New constructor with right-click option
+    public UiButton(Vector2 position, Vector2 size, String text, boolean acceptRightClick) {
         this.position = position;
         this.size = size;
         this.text = text;
-        lock = false;
-        draw = true;
+        this.lock = false;
+        this.draw = true;
+        this.acceptRightClick = acceptRightClick;
     }
 
     public void DrawButton() {
-
-        if(!draw)
+        if (!draw) {
             return;
+        }
 
         // Draw button rectangle
-        if(lock)
+        if (lock) {
             DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, DARKGRAY);
-        else
+        } else {
             DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, LIGHTGRAY);
+        }
+
+        // Highlight if hovered
         int mouseX = (int) Raylib.GetMousePosition().x();
         int mouseY = (int) Raylib.GetMousePosition().y();
-            if (mouseX >= position.x && mouseX <= position.x + size.x && mouseY >= position.y && mouseY <= position.y + size.y) {
-
-                if(!lock)
-                    DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, GRAY);
+        if (mouseX >= position.x && mouseX <= position.x + size.x
+                && mouseY >= position.y && mouseY <= position.y + size.y) {
+            if (!lock) {
+                DrawRectangle((int) position.x, (int) position.y, (int) size.x, (int) size.y, GRAY);
             }
+        }
+
         // Draw button border
         DrawRectangleLines((int) position.x, (int) position.y, (int) size.x, (int) size.y, BLACK);
 
         // Draw button text centered
         int textWidth = MeasureText(text, 20);
-        int textX = (int)position.x + ((int)size.x - textWidth) / 2;
-        int textY = (int)position.y + ((int)size.y - 20) / 2;
+        int textX = (int) position.x + ((int) size.x - textWidth) / 2;
+        int textY = (int) position.y + ((int) size.y - 20) / 2;
         DrawText(text, textX, textY, 20, BLACK);
+    }
+
+    public boolean IsButtonClicked() {
+        if (lock) {
+            return false;
+        }
+
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+
+        // Check if mouse is over button
+        boolean mouseOver = mouseX >= position.x && mouseX <= position.x + size.x
+                && mouseY >= position.y && mouseY <= position.y + size.y;
+
+        // Return true for either left or right click when mouse is over
+        return mouseOver && (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
+                || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT));
     }
 
     public static void CheckIsSoundenabled() {
@@ -73,21 +98,5 @@ public class UiButton {
             buttons[1] = new UiButton(new Vector2(640, 100), new Vector2(360, 100), "Disable Sound");
             IsSoundenabled = true;
         }
-    }
-
-    public boolean IsButtonClicked()
-    {
-        if(lock)
-            return false;
-
-        int mouseX = (int) Raylib.GetMousePosition().x();
-        int mouseY = (int) Raylib.GetMousePosition().y();
-        if (Raylib.IsMouseButtonPressed(Raylib.MOUSE_BUTTON_LEFT)) {
-            if (mouseX >= position.x && mouseX <= position.x + size.x && mouseY >= position.y && mouseY <= position.y + size.y) {
-
-                return true;
-            }
-        }
-        return false;
     }
 }
